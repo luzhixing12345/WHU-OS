@@ -12,6 +12,6 @@ Linux Ubuntu (Windows WSL)
 
 ## Blog
 
-该实验所有的过程以及中途遇到的问题,原理和解决思路均记录在[个人博客](1)
+该实验所有的过程以及中途遇到的问题,原理和解决思路均记录在[个人博客](https://luzhixing12345.github.io/tags/OS/)
 
 ## File Content
