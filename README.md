@@ -8,10 +8,6 @@
 
 ## Develop Requirements
 
-Linux Ubuntu (Windows WSL)
-
 ## Blog
 
-该实验所有的过程以及中途遇到的问题,原理和解决思路均记录在[个人博客](https://luzhixing12345.github.io/tags/OS/)
-
-## File Content
+该实验所有的过程以及中途遇到的问题,原理和解决思路均记录在[个人博客](https://luzhixing12345.github.io/tags/OS/),每一天的任务和代码内容更新在对应的文件夹下
