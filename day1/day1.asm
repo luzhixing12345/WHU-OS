@@ -45,7 +45,7 @@
         DB      0x0a         ; 换行
         DB      0
 
-        `         ; 填写0x00直到0x001fe
+        TIMES   0x1fe-($-$$) DB 0x00         ; 填写0x00直到0x001fe
 
         DB      0x55, 0xaa
 
