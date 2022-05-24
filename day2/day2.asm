@@ -29,7 +29,7 @@
 
         DB      "HELLO-OS   "   ; 磁盘的名称（必须为11字节，不足填空格）
         DB      "FAT12   "      ; 磁盘格式名称（必须是8字节，不足填空格）
-        TIMES   18  DB 0        ; 先空出18字节
+        RESB    18              ; 先空出18字节
 
 ; 程序主体
 
@@ -63,7 +63,6 @@ msg:
 ; 启动扇区以外部分输出
 
         DB      0xf0, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00
-        TIMES   4600    DB 0
+        RESB    4600  
         DB      0xf0, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00
-        TIMES   1469432 DB 0
-; 只是把 RESB 20 改成了 TIMES 20 DB 0
+        RESB    1469432
