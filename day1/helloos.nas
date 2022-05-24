@@ -21,7 +21,7 @@
 		DD		0xffffffff		; たぶんボリュームシリアル番号
 		DB		"HELLO-OS   "	; ディスクの名前（11バイト）
 		DB		"FAT12   "		; フォーマットの名前（8バイト）
-		TIMES   18  DB 0				; とりあえず18バイトあけておく
+		RESB	18				; とりあえず18バイトあけておく
 
 ; プログラム本体
 
@@ -38,13 +38,13 @@
 		DB		0x0a			; 改行
 		DB		0
 
-		TIMES   0x1fe-($-$$) DB 0x00			; 0x001feまでを0x00で埋める命令
+		RESB	0x1fe-$			; 0x001feまでを0x00で埋める命令
 
 		DB		0x55, 0xaa
 
 ; 以下はブートセクタ以外の部分の記述
 
 		DB		0xf0, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00
-		TIMES   4600    DB 0
+		RESB	4600
 		DB		0xf0, 0xff, 0xff, 0x00, 0x00, 0x00, 0x00, 0x00
-		TIMES	1469432 DB 0
+		RESB	1469432
