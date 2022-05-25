@@ -14,10 +14,24 @@
 
 我将所有的文件内容和引用内容抽离出来了,每一个文件夹内容都可以直接运行使用,不需要复制/移动
 
+> 目前只在Windows系统测试运行,未在其他系统测试
+
+运行第一天的程序
+
 ```bash
-# 运行第一天的程序
-cd day1
-make run
+make -C day1
+```
+
+运行最后一天的程序
+
+```bash
+make -C day30
+```
+
+清除生成的文件
+
+```bash
+make -C day1 clean
 ```
 
 ## Visualization Result
