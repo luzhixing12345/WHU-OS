@@ -22,15 +22,15 @@ VRAM        EQU     0x0ff8
             MOV     BYTE [VMODE],8     ;记录显卡模式
             MOV     WORD [SCRNX],320    ;记录显卡宽度
             MOV     WORD [SCRNY],200    ;记录显卡高度
-            MOV     DWORD [VRAM],0xA0000;记录显卡显存地址
+            MOV     DWORD [VRAM],0x000a0000;记录显卡显存地址
 
 ; 用BIOS 取得键盘上各种LED状态
-            MOV     AX,0x02             ;设置键盘状态
+            MOV     AH,0x02             ;设置键盘状态
             INT     0x16
             MOV     [LEDS],AL           ;记录键盘状态
 
 
-            MOV     AX,0xff             ;设置键盘状态
+            MOV     AL,0xff             ;设置键盘状态
             OUT     0x21,AL
             NOP
             OUT     0xa1,AL
@@ -68,6 +68,11 @@ pipelineflush:
             MOV     EDI,BOTPAK
             MOV     ECX,512*1024/4       ;512KB
             CALL    memcpy
+
+            MOV		ESI,0x7c00		
+		    MOV		EDI,DSKCAC		
+		    MOV		ECX,512/4
+		    CALL	memcpy
 
             MOV     ESI,DSKCAC0+512
             MOV     EDI,DSKCAC+512
@@ -112,7 +117,7 @@ memcpy:
 GDT0:
             RESB    8
             DW      0xffff,0x0000,0x9200,0x00cf
-            DW      0xffff,0x0000,0x92a8,0x0047
+            DW      0xffff,0x0000,0x9a28,0x0047
             DW      0
 
 GDTR0:
