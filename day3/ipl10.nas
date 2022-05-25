@@ -1,5 +1,6 @@
 ; hello-os
 ; TAB=4
+CYLS    EQU	    10
 
 ; 标准FAT12格式软盘专用的代码 Stand FAT12 format floppy code
         ORG     0x7c00
@@ -43,17 +44,42 @@ entry:
 		MOV		ES,AX
 		MOV		CH,0			; 柱面0
 		MOV		DH,0			; 磁头0
-		MOV		CL,2		    	; 读取第2个扇区
+		MOV		CL,2		    ; 读取第2个扇区
+readloop:
+		MOV		SI,0			; 记录失败次数的寄存器
+
+retry:
 		MOV		AH,0x02			; AH=0x02 : 读取磁盘
 		MOV		AL,1			; AL=1 : 读取第1个扇区
 		MOV		BX,0
 		MOV		DL,0x00			; DL=0x00 : 读取第1个簇(A驱动器)
 		INT		0x13			; 读取磁盘
-		JC		error
+		JNC		next			; 读取成功,跳转到next
+		ADD		SI,1			; 读取失败次数+1
+		CMP		SI,5			; 读取失败次数>5,跳转到fin
+		JAE		error			; 跳转到error
+		MOV 	AH,0x00			; AH=0x00 : 停止磁盘
+		MOV 	DL,0x00			; DL=0x00 : 停止第1个簇(A驱动器)
+		INT		0x13			; 停止磁盘
+		JMP		retry			; 重试
+next:
+		MOV		AX,ES			; AX=ES
+		ADD     AX,0x0020		; 把内存地址后移0x200(512)字节
+		MOV		ES,AX			; 不存在ADD ES,0x200
+		ADD		CL,1			; 读取下一个扇区
+		CMP		CL,18			
+		JBE		readloop		; 读取2-18扇区
+		MOV		CL,1
+		ADD 	DH,1			; 磁头+1
+		CMP		DH,2			; 磁头>2,跳转到readloop
+		JB		readloop		; 跳转到readloop
+		MOV		DH,0			; 磁头=0
+		ADD		CH,1			; 柱面+1
+		CMP		CH,CYLS			; 柱面>CYLS,跳转到readloop
+		JB 		readloop		; 跳转到readloop
 
-fin:
-		HLT			
-		JMP		fin
+		MOV		[0x0ff0],CH		; 写入磁盘柱面
+		JMP 	0xc200
 
 error:
 		MOV		SI,msg
@@ -66,6 +92,11 @@ putloop:
 		MOV		BX,15			
 		INT		0x10			
 		JMP		putloop
+
+fin:
+		HLT			
+		JMP		fin
+
 msg:
 		DB		0x0a, 0x0a		
 		DB		"load error"
