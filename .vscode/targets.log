@@ -1,0 +1,353 @@
+make.exe all --print-data-base --no-builtin-variables --no-builtin-rules --question
+# GNU Make 3.82
+# Built for i686-pc-mingw32
+# Copyright (C) 2010  Free Software Foundation, Inc.
+# License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+# This is free software: you are free to change and redistribute it.
+# There is NO WARRANTY, to the extent permitted by law.
+ 
+
+# Make data base, printed on Mon Jul 04 16:09:40 2022
+
+# Variables
+
+# environment
+POWERSHELL_DISTRIBUTION_CHANNEL = MSI:Windows 10 Home China
+# automatic
+?F = $(notdir $?)
+# automatic
+<D = $(patsubst %/,%,$(dir $<))
+# default
+.SHELLFLAGS := -c
+# makefile
+MAKEFLAGS = Rrqp
+# environment
+VSCODE_LOG_NATIVE = false
+# automatic
+?D = $(patsubst %/,%,$(dir $?))
+# automatic
+@D = $(patsubst %/,%,$(dir $@))
+# environment
+HOMEDRIVE = C:
+# automatic
+@F = $(notdir $@)
+# automatic
+^D = $(patsubst %/,%,$(dir $^))
+# makefile
+CURDIR := g:/learner_lu/L-OS
+# default
+SHELL := sh.exe
+# environment
+CLION = E:\CLion 2021.3.3\bin;
+# environment
+WINDIR = C:\Windows
+# environment
+VSCODE_NLS_CONFIG = {"locale":"zh-cn","availableLanguages":{"*":"zh-cn"},"_languagePackId":"bbca1a7059cee8a1b93da8947fee1c4f.zh-cn","_translationsConfigFile":"C:\\Users\\luzhi\\AppData\\Roaming\\Code\\clp\\bbca1a7059cee8a1b93da8947fee1c4f.zh-cn\\tcf.json","_cacheRoot":"C:\\Users\\luzhi\\AppData\\Roaming\\Code\\clp\\bbca1a7059cee8a1b93da8947fee1c4f.zh-cn","_resolvedLanguagePackCoreLocation":"C:\\Users\\luzhi\\AppData\\Roaming\\Code\\clp\\bbca1a7059cee8a1b93da8947fee1c4f.zh-cn\\30d9c6cd9483b2cc586687151bcbcd635f373630","_corruptedFile":"C:\\Users\\luzhi\\AppData\\Roaming\\Code\\clp\\bbca1a7059cee8a1b93da8947fee1c4f.zh-cn\\corrupted.info","_languagePackSupport":true}
+# environment
+ONEDRIVE = C:\Users\luzhi\OneDrive
+# environment
+PATHEXT = .COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH;.MSC
+# makefile
+MAKEFILE_LIST := 
+# environment
+TMP = C:\Users\luzhi\AppData\Local\Temp
+# environment
+VSCODE_VERBOSE_LOGGING = true
+# environment
+PROGRAMW6432 = C:\Program Files
+# environment
+PROGRAMDATA = C:\ProgramData
+# environment
+VSCODE_IPC_HOOK_EXTHOST = \\.\pipe\vscode-ipc-1b13177d-edc6-42de-8ef7-24dfc84dea8e-sock
+# environment
+VSCODE_CWD = C:\Windows\System32
+# environment
+PATH = C:\Program Files (x86)\Common Files\Intel\Shared Libraries\redist\intel64\compiler;E:\VMWARE\bin\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;D:\ffmpeg-n4.4-latest-win64-lgpl-shared-4.4\bin;C:\Users\luzhi\Anaconda3;C:\Users\luzhi\Anaconda3\Library\bin;C:\Users\luzhi\Anaconda3\Library\mingw-w64\bin;C:\Users\luzhi\Anaconda3\Scripts;C:\Program Files\Bandizip\;D:\node-v16.13.2-win-x64;D:\node-v16.13.2-win-x64\node-global;D:\mingw64\bin;E:\QT\Tools\mingw730_64\bin;C:\Users\luzhi\Anaconda3\envs\test;C:\Users\luzhi\Anaconda3\Library;C:\Program Files\Google\Chrome\Application;E:\dvisvgm-2.11.1;C:\Program Files\Pandoc\;E:\apache-tomcat-9.0.59\bin;C:\Program Files (x86)\Java\jdk1.8.0_321\jre\bin;E:\apache-maven-3.8.4\bin;E:\wechat-developerTools;E:\xshell\;E:\xftp\;C:\Program Files\dotnet\;E:\Graphviz\bin;C:\FPC\3.2.2\bin\i386-Win32;C:\Program Files (x86)\Java\jdk1.8.0_321\bin;D:\javacc-javacc-7.0.10\scripts;E:\Git\cmd;E:\QEMU;E:\NASM;E:\pandoc-2.18;E:\cmake-3.23.2-windows-x86_64\bin;E:\QT\5.12.11\mingw73_64\bin;E:\QT\5.12.11\mingw73_64;E:\QT\Tools\mingw730_64\bin;E:\OpenCV\opencv\build\bin;E:\OpenCV\opencv\build\x64\vc15\bin;D:\SDL2\x86_64-w64-mingw32\include;D:\SDL2\x86_64-w64-mingw32\bin;C:\Program Files\PowerShell\7\;C:\ProgramData\Microsoft\Windows\Start Menu\Programs\PowerShell;C:\Users\luzhi\AppData\Local\Programs\Python\Python37\Scripts\;C:\Users\luzhi\AppData\Local\Programs\Python\Python37\;E:\texlive\2021\bin\win32;C:\Users\luzhi\AppData\Local\Microsoft\WindowsApps;E:\Microsoft VS Code\bin;E:\MikTEX\miktex\bin\x64\;E:\CLion 2021.3.3\bin;;E:\IntelliJ IDEA 2021.3.2\bin;;E:\Fiddler;C:\Users\luzhi\AppData\Local\Programs\oh-my-posh\bin
+# environment
+COMMONPROGRAMW6432 = C:\Program Files\Common Files
+# environment
+ZES_ENABLE_SYSMAN = 1
+# environment
+C_INCLUDE_PATH = D:\SDL2\x86_64-w64-mingw32\include
+# environment
+PROCESSOR_ARCHITECTURE = x86
+# environment
+LIBRARY_PATH = D:\SDL2\x86_64-w64-mingw32\lib
+# environment
+USERPROFILE = C:\Users\luzhi
+# environment
+ALLUSERSPROFILE = C:\ProgramData
+# environment
+VSCODE_LOG_STACK = false
+# environment
+NUMBER_OF_PROCESSORS = 16
+# environment
+ELECTRON_RUN_AS_NODE = 1
+# default
+.FEATURES := target-specific order-only second-expansion else-if shortest-stem undefine archives
+# environment
+INTELLIJ IDEA = E:\IntelliJ IDEA 2021.3.2\bin;
+# automatic
+%F = $(notdir $%)
+# environment
+POSH_THEMES_PATH = C:\Users\luzhi\AppData\Local\Programs\oh-my-posh\themes
+# environment
+CHROME_CRASHPAD_PIPE_NAME = \\.\pipe\crashpad_21440_PBYZQWIZLHCDHVYR
+# environment
+VSCODE_PIPE_LOGGING = true
+# environment
+COMPUT 
+make.exe: *** No rule to make target `all'.  Stop.
+
+ERNAME = LZX
+# environment
+PROGRAMFILES = C:\Program Files (x86)
+# environment
+DRIVERDATA = C:\Windows\System32\Drivers\DriverData
+# environment
+ORIGINAL_XDG_CURRENT_DESKTOP = undefined
+# environment
+USERNAME = luzhi
+# environment
+PUBLIC = C:\Users\Public
+# environment
+VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
+# environment
+VSCODE_CODE_CACHE_PATH = C:\Users\luzhi\AppData\Roaming\Code\CachedData\30d9c6cd9483b2cc586687151bcbcd635f373630
+# environment
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = 1
+# environment
+COMMONPROGRAMFILES = C:\Program Files (x86)\Common Files
+# environment
+LOGONSERVER = \\LZX
+# environment
+ONEDRIVECONSUMER = C:\Users\luzhi\OneDrive
+# environment
+VSCODE_HANDLES_UNCAUGHT_ERRORS = true
+# environment
+USERDOMAIN = LZX
+# environment
+MIC_LD_LIBRARY_PATH = C:\Program Files (x86)\Common Files\Intel\Shared Libraries\compiler\lib\mic
+# environment
+MAKELEVEL := 0
+# default
+MAKE = $(MAKE_COMMAND)
+# default
+MAKECMDGOALS := all
+# environment
+JAVA_HOME = C:\Program Files (x86)\Java\jdk1.8.0_321
+# default
+MAKE_VERSION := 3.82
+# makefile
+.DEFAULT_GOAL := 
+# environment
+CLASSPATH = .;C:\Program Files (x86)\Java\jdk1.8.0_321\lib;C:\Program Files (x86)\Java\jdk1.8.0_321\lib\tools.jar;
+# environment
+PROGRAMFILES(X86) = C:\Program Files (x86)
+# automatic
+%D = $(patsubst %/,%,$(dir $%))
+# environment
+LOCALAPPDATA = C:\Users\luzhi\AppData\Local
+# environment
+PSMODULEPATH = C:\Program Files\WindowsPowerShell\Modules;C:\Windows\system32\WindowsPowerShell\v1.0\Modules
+# default
+MAKE_COMMAND := make.exe
+# environment
+PROCESSOR_ARCHITEW6432 = AMD64
+# default
+.VARIABLES := 
+# automatic
+*F = $(notdir $*)
+# environment
+PROCESSOR_IDENTIFIER = Intel64 Family 6 Model 141 Stepping 1, GenuineIntel
+# environment
+OS = Windows_NT
+# environment
+VSCODE_IPC_HOOK = \\.\pipe\2fcf4b013dee71c034c291ae8e1ebcb2-1.68.1-main-sock
+# environment
+HOMEPATH = \Users\luzhi
+# environment
+COMMONPROGRAMFILES(X86) = C:\Program Files (x86)\Common Files
+# environment
+PROMPT = $P$G
+# environment
+MFLAGS = -Rrqp
+# automatic
+*D = $(patsubst %/,%,$(dir $*))
+# environment
+INTEL_DEV_REDIST = C:\Program Files (x86)\Common Files\Intel\Shared Libraries\
+# environment
+SYSTEMROOT = C:\Windows
+# automatic
++D = $(patsubst %/,%,$(dir $+))
+# automatic
++F = $(notdir $+)
+# environment
+APPDATA = C:\Users\luzhi\AppData\Roaming
+# environment
+TEMP = C:\Users\luzhi\AppData\Local\Temp
+# environment
+COMSPEC = C:\Windows\system32\cmd.exe
+# default
+MAKEFILES := 
+# automatic
+<F = $(notdir $<)
+# environment
+LC_ALL = C
+# automatic
+^F = $(notdir $^)
+# default
+SUFFIXES := 
+# environment
+SYSTEMDRIVE = C:
+# environment
+SESSIONNAME = Console
+# environment
+PROCESSOR_REVISION = 8d01
+# default
+.RECIPEPREFIX := 
+# environment
+LANG = C
+# environment
+PROCESSOR_LEVEL = 6
+# environment
+VSCODE_PID = 21440
+# environment
+USERDOMAIN_ROAMINGPROFILE = LZX
+# variable set hash-table stats:
+# Load=100/1024=10%, Rehash=0, Collisions=12/115=10%
+
+# Pattern-specific Variable Values
+
+# No pattern-specific variable values.
+
+# Directories
+
+# \Program Files (x86)\NVIDIA Corporation\PhysX\Common;C: could not be stat'd.
+# \QT\Tools\mingw730_64\bin;E: could not be stat'd.
+# \Program Files\Google\Chrome\Application;E: could not be stat'd.
+# \QT\5.12.11\mingw73_64\bin;E: could not be stat'd.
+# \Program Files (x86)\Java\jdk1.8.0_321\bin;D: could not be stat'd.
+# \Windows\System32\OpenSSH\;C: could not be stat'd.
+# \CLion 2021.3.3\bin;;E: could not be stat'd.
+# \QEMU;E: could not be stat'd.
+# \Users\luzhi\Anaconda3\Library;C: could not be stat'd.
+# \OpenCV\opencv\build\x64\vc15\bin;D: could not be stat'd.
+# \javacc-javacc-7.0.10\scripts;E: could not be stat'd.
+# . (key g:/learner_lu/L-OS, mtime 1656921783): 24 files, no impossibilities.
+# \Windows;C: could not be stat'd.
+# \apache-maven-3.8.4\bin;E: could not be stat'd.
+# \ffmpeg-n4.4-latest-win64-lgpl-shared-4.4\bin;C: could not be stat'd.
+# C: could not be stat'd.
+# \Users\luzhi\AppData\Local\Programs\Python\Python37\Scripts\;C: could not be stat'd.
+# \NASM;E: could not be stat'd.
+# \node-v16.13.2-win-x64;D: could not be stat'd.
+# \cmake-3.23.2-windows-x86_64\bin;E: could not be stat'd.
+# \Windows\System32\Wbem;C: could not be stat'd.
+# \wechat-developerTools;E: could not be stat'd.
+# \xshell\;E: could not be stat'd.
+# \Microsoft VS Code\bin;E: could not be stat'd.
+# \node-v16.13.2-win-x64\node-global;D: could not be stat'd.
+# \QT\Tools\mingw730_64\bin;C: could not be stat'd.
+# \apache-tomcat-9.0.59\bin;C: could not be stat'd.
+# \SDL2\x86_64-w64-mingw32\bin;C: could not be stat'd.
+# \Users\luzhi\Anaconda3;C: could not be stat'd.
+# \Users\luzhi\Anaconda3\Library\bin;C: could not be stat'd.
+# \IntelliJ IDEA 2021.3.2\bin;;E: could not be stat'd.
+# \Users\luzhi\Anaconda3\Scripts;C: could not be stat'd.
+# \QT\5.12.11\mingw73_64;E: could not be stat'd.
+# \pandoc-2.18;E: could not be stat'd.
+# \FPC\3.2.2\bin\i386-Win32;C: could not be stat'd.
+# \Program Files\Pandoc\;E: could not be stat'd.
+# \Program Files\PowerShell\7\;C: could not be stat'd.
+# \Program Files (x86)\Java\jdk1.8.0_321\jre\bin;E: could not be stat'd.
+# \dvisvgm-2.11.1;C: could not be stat'd.
+# \OpenCV\opencv\build\bin;E: could not be stat'd.
+# \mingw64\bin;E: could not be stat'd.
+# \Users\luzhi\Anaconda3\Library\mingw-w64\bin;C: could not be stat'd.
+# \SDL2\x86_64-w64-mingw32\include;D: could not be stat'd.
+# \Program Files\dotnet\;E: could not be stat'd.
+# \Program Files (x86)\Common Files\Intel\Shared Libraries\redist\intel64\compiler;E: could not be stat'd.
+# \Program Files\NVIDIA Corporation\NVIDIA NvDLISR;D: could not be stat'd.
+# \Windows\system32;C: could not be stat'd.
+# \Users\luzhi\AppData\Local\Programs\Python\Python37\;E: could not be stat'd.
+# \texlive\2021\bin\win32;C: could not be stat'd.
+# \MikTEX\miktex\bin\x64\;E: could not be stat'd.
+# \Users\luzhi\AppData\Local\Programs\oh-my-posh\bin: could not be stat'd.
+# \Users\luzhi\Anaconda3\envs\test;C: could not be stat'd.
+# \ProgramData\Microsoft\Windows\Start Menu\Programs\PowerShell;C: could not be stat'd.
+# \Program Files\Bandizip\;D: could not be stat'd.
+# \Git\cmd;E: could not be stat'd.
+# \Windows\System32\WindowsPowerShell\v1.0\;C: could not be stat'd.
+# \Graphviz\bin;C: could not be stat'd.
+# \xftp\;C: could not be stat'd.
+# \Users\luzhi\AppData\Local\Microsoft\WindowsApps;E: could not be stat'd.
+# \VMWARE\bin\;C: could not be stat'd.
+# \Fiddler;C: could not be stat'd.
+
+# 24 files, no impossibilities in 61 directories.
+
+# Implicit Rules
+
+# No implicit rules.
+
+# Files
+
+# Not a target:
+all:
+#  Command line target.
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has not been updated.
+
+# Not a target:
+.SUFFIXES:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+Makefile:
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has been updated.
+#  Failed to be updated.
+
+# Not a target:
+makefile:
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has been updated.
+#  Failed to be updated.
+
+# Not a target:
+.DEFAULT:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+GNUmakefile:
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has been updated.
+#  Failed to be updated.
+
+# files hash-table stats:
+# Load=6/1024=1%, Rehash=0, Collisions=0/15=0%
+# VPATH Search Paths
+
+# No `vpath' search paths.
+
+# No general (`VPATH' variable) search path.
+
+# # of strings in strcache: 0 / lookups = 92 / hits = 92
+# # of strcache buffers: 1 (* 8176 B/buffer = 8176 B)
+# strcache used: total = 0 (2047) / max = 0 / min = 8176 / avg = 0
+# strcache free: total = 0 (6129) / max = 0 / min = 8176 / avg = 0
+
+# strcache hash-table stats:
+# Load=90/8192=1%, Rehash=0, Collisions=1/92=1%
+# Finished Make data base on Mon Jul 04 16:09:40 2022
+
+ 
