@@ -1,4 +1,4 @@
-void io_hlt(void);
+void io_hlt(void);  // 使处理器处于暂时停机状态
 void io_cli(void);
 void io_out8(int port, int data);
 int io_load_eflags(void);
@@ -81,8 +81,8 @@ void init_palette(void) {
 
 void set_palette(int start, int end, unsigned char *rgb) {
     int i, eflags;
-    eflags = io_load_eflags();
-    io_cli();
+    eflags = io_load_eflags(); // 记录中断许可标志的值
+    io_cli();                  // 将许可标志置为0,禁止中断
     io_out8(0x03c8, start);
     for (i = start; i <= end; i++) {
         io_out8(0x03c9, rgb[0] / 4);

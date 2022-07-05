@@ -1,4 +1,4 @@
-# L-OS
+# WHU-OS
 
 武汉大学操作系统设计课程的大作业: **复现一个操作系统内核**
 
@@ -27,7 +27,7 @@ make -C day{DAY}
 - 运行最后修改过的的操作系统
 
   ```bash
-  make -C L-OS
+  make -C WHU-OS
   ```
 
 清除生成的文件
@@ -40,6 +40,8 @@ make -C day{DAY} clean
 
 - day1
 
+  ![20220705213449](https://raw.githubusercontent.com/learner-lu/picbed/master/20220705213449.png)
+
 - day10
 
 - day20
@@ -48,9 +50,9 @@ make -C day{DAY} clean
 
 ## 关于
 
-### 关于L-OS
+### 关于WHU-OS
 
-L-OS基于30天自制操作系统最后的操作系统,在原先的基础上进行了部分修改,模块的添加,代码的重构.详见[L-OS](L-OS.md)
+WHU-OS基于30天自制操作系统最后的操作系统,在原先的基础上进行了部分修改,模块的添加,代码的重构.详见[WHU-OS](WHU-OS.md)
 
 ### 关于操作系统
 
@@ -60,7 +62,7 @@ L-OS基于30天自制操作系统最后的操作系统,在原先的基础上进�
 
 ### 关于文档
 
-  [课程实验相关资料](https://github.com/luzhixing12345/L-OS/releases/tag/v0.0.1)
+[课程实验相关资料](https://github.com/luzhixing12345/WHU-OS/releases/tag/v0.0.1)
 
 [复现实验-操作系统验收报告](123)
 
