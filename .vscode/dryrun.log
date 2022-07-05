@@ -1,6 +1,0 @@
-make.exe --dry-run --always-make --keep-going --print-directory
-make.exe: Entering directory `g:/learner_lu/L-OS'
-make.exe: Leaving directory `g:/learner_lu/L-OS'
- 
-make.exe: *** No targets specified and no makefile found.  Stop.
-
