@@ -23,19 +23,19 @@ void init_pic(void)
     return;
 }
 
-void inthandler21(int *esp)
-/*
-  INT 0X21 对应键盘的中断处理程序
-  IRQ1 对应键盘的中断处理程序
-*/
-{
-	struct BOOTINFO *binfo = (struct BOOTINFO *) ADR_BOOTINFO;
-	boxfill8(binfo->vram, binfo->scrnx, COL8_000000, 0, 0, 32 * 8 - 1, 15);
-	putfonts8_asc(binfo->vram, binfo->scrnx, 0, 0, COL8_FFFFFF, "INT 21 (IRQ-1) : PS/2 keyboard");
-	for (;;) {
-		io_hlt();
-	}
-}
+  void inthandler21(int *esp)
+  /*
+    INT 0X21 对应键盘的中断处理程序
+    IRQ1 对应键盘的中断处理程序
+  */
+  {
+    struct BOOTINFO *binfo = (struct BOOTINFO *) ADR_BOOTINFO;
+    boxfill8(binfo->vram, binfo->scrnx, COL8_000000, 0, 0, 32 * 8 - 1, 15);
+    putfonts8_asc(binfo->vram, binfo->scrnx, 0, 0, COL8_FFFFFF, "INT 21 (IRQ-1) : PS/2 keyboard");
+    for (;;) {
+      io_hlt();
+    }
+  }
 
 void inthandler2c(int *esp)
 /*

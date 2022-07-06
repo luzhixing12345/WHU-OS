@@ -66,7 +66,7 @@ void HariMain(void)
     init_gdtidt();
 	init_palette();
 	init_screen8(binfo->vram, binfo->scrnx, binfo->scrny);
-	mx = (binfo->scrnx - 16) / 2; /* 画面中央になるように座標計算 */
+	mx = (binfo->scrnx - 16) / 2; // 画面中心坐标计算
 	my = (binfo->scrny - 28 - 16) / 2;
 	init_mouse_cursor8(mcursor, COL8_008484);
 	putblock8_8(binfo->vram, binfo->scrnx, 16, 16, mx, my, mcursor, 16);
@@ -234,7 +234,7 @@ void init_gdtidt(void)
 	struct GATE_DESCRIPTOR    *idt = (struct GATE_DESCRIPTOR    *) 0x0026f800;
 	int i;
 
-	/* GDTの初期化 */
+	// GDT初始化
 	for (i = 0; i < 8192; i++) {
 		set_segmdesc(gdt + i, 0, 0, 0);
 	}
@@ -242,7 +242,7 @@ void init_gdtidt(void)
 	set_segmdesc(gdt + 2, 0x0007ffff, 0x00280000, 0x409a);
 	load_gdtr(0xffff, 0x00270000);
 
-	/* IDTの初期化 */
+	// IDT初始化
 	for (i = 0; i < 256; i++) {
 		set_gatedesc(idt + i, 0, 0, 0);
 	}

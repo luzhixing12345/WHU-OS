@@ -9,10 +9,10 @@ struct BOOTINFO { /* 0x0ff0-0x0fff */
 #define ADR_BOOTINFO	0x00000ff0
 
 /* naskfunc.nas */
-void io_hlt(void);
-void io_cli(void);
-void io_sti(void);
-void io_stihlt(void);
+void io_hlt(void); // 挂起
+void io_cli(void); // 禁用中断
+void io_sti(void); // 启动中断
+void io_stihlt(void); // 先恢复中断，然后挂起
 int io_in8(int port);
 void io_out8(int port, int data);
 int io_load_eflags(void);
