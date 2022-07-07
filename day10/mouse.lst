@@ -1,0 +1,123 @@
+     1 00000000                                 [FORMAT "WCOFF"]
+     2 00000000                                 [INSTRSET "i486p"]
+     3 00000000                                 [OPTIMIZE 1]
+     4 00000000                                 [OPTION 1]
+     5 00000000                                 [BITS 32]
+     6 00000000                                 	EXTERN	_io_out8
+     7 00000000                                 	EXTERN	_io_in8
+     8 00000000                                 	EXTERN	_fifo8_put
+     9 00000000                                 	EXTERN	_wait_KBC_sendready
+    10 00000000                                 [FILE "mouse.c"]
+    11                                          [SECTION .text]
+    12 00000000                                 	GLOBAL	_inthandler2c
+    13 00000000                                 _inthandler2c:
+    14 00000000 55                              	PUSH	EBP
+    15 00000001 89 E5                           	MOV	EBP,ESP
+    16 00000003 6A 64                           	PUSH	100
+    17 00000005 68 000000A0                     	PUSH	160
+    18 0000000A E8 [00000000]                   	CALL	_io_out8
+    19 0000000F 6A 62                           	PUSH	98
+    20 00000011 6A 20                           	PUSH	32
+    21 00000013 E8 [00000000]                   	CALL	_io_out8
+    22 00000018 6A 60                           	PUSH	96
+    23 0000001A E8 [00000000]                   	CALL	_io_in8
+    24 0000001F 0F B6 C0                        	MOVZX	EAX,AL
+    25 00000022 50                              	PUSH	EAX
+    26 00000023 68 [00000000]                   	PUSH	_mousefifo
+    27 00000028 E8 [00000000]                   	CALL	_fifo8_put
+    28 0000002D C9                              	LEAVE
+    29 0000002E C3                              	RET
+    30 0000002F                                 	GLOBAL	_enable_mouse
+    31 0000002F                                 _enable_mouse:
+    32 0000002F 55                              	PUSH	EBP
+    33 00000030 89 E5                           	MOV	EBP,ESP
+    34 00000032 E8 [00000000]                   	CALL	_wait_KBC_sendready
+    35 00000037 68 000000D4                     	PUSH	212
+    36 0000003C 6A 64                           	PUSH	100
+    37 0000003E E8 [00000000]                   	CALL	_io_out8
+    38 00000043 E8 [00000000]                   	CALL	_wait_KBC_sendready
+    39 00000048 68 000000F4                     	PUSH	244
+    40 0000004D 6A 60                           	PUSH	96
+    41 0000004F E8 [00000000]                   	CALL	_io_out8
+    42 00000054 8B 45 08                        	MOV	EAX,DWORD [8+EBP]
+    43 00000057 C6 40 03 00                     	MOV	BYTE [3+EAX],0
+    44 0000005B C9                              	LEAVE
+    45 0000005C C3                              	RET
+    46 0000005D                                 	GLOBAL	_mouse_decode
+    47 0000005D                                 _mouse_decode:
+    48 0000005D 55                              	PUSH	EBP
+    49 0000005E 89 E5                           	MOV	EBP,ESP
+    50 00000060 56                              	PUSH	ESI
+    51 00000061 53                              	PUSH	EBX
+    52 00000062 8B 55 08                        	MOV	EDX,DWORD [8+EBP]
+    53 00000065 8B 4D 0C                        	MOV	ECX,DWORD [12+EBP]
+    54 00000068 89 CE                           	MOV	ESI,ECX
+    55 0000006A 8A 42 03                        	MOV	AL,BYTE [3+EDX]
+    56 0000006D 84 C0                           	TEST	AL,AL
+    57 0000006F 75 11                           	JNE	L4
+    58 00000071 80 F9 FA                        	CMP	CL,-6
+    59 00000074 74 06                           	JE	L13
+    60 00000076                                 L12:
+    61 00000076 31 C0                           	XOR	EAX,EAX
+    62 00000078                                 L3:
+    63 00000078 5B                              	POP	EBX
+    64 00000079 5E                              	POP	ESI
+    65 0000007A 5D                              	POP	EBP
+    66 0000007B C3                              	RET
+    67 0000007C                                 L13:
+    68 0000007C C6 42 03 01                     	MOV	BYTE [3+EDX],1
+    69 00000080 EB F4                           	JMP	L12
+    70 00000082                                 L4:
+    71 00000082 3C 01                           	CMP	AL,1
+    72 00000084 74 61                           	JE	L14
+    73 00000086 3C 02                           	CMP	AL,2
+    74 00000088 74 54                           	JE	L15
+    75 0000008A 3C 03                           	CMP	AL,3
+    76 0000008C 74 05                           	JE	L16
+    77 0000008E 83 C8 FF                        	OR	EAX,-1
+    78 00000091 EB E5                           	JMP	L3
+    79 00000093                                 L16:
+    80 00000093 8A 1A                           	MOV	BL,BYTE [EDX]
+    81 00000095 81 E6 000000FF                  	AND	ESI,255
+    82 0000009B 89 D8                           	MOV	EAX,EBX
+    83 0000009D 88 4A 02                        	MOV	BYTE [2+EDX],CL
+    84 000000A0 83 E0 07                        	AND	EAX,7
+    85 000000A3 89 72 08                        	MOV	DWORD [8+EDX],ESI
+    86 000000A6 89 42 0C                        	MOV	DWORD [12+EDX],EAX
+    87 000000A9 88 D8                           	MOV	AL,BL
+    88 000000AB 0F B6 4A 01                     	MOVZX	ECX,BYTE [1+EDX]
+    89 000000AF 83 E0 10                        	AND	EAX,16
+    90 000000B2 89 4A 04                        	MOV	DWORD [4+EDX],ECX
+    91 000000B5 C6 42 03 01                     	MOV	BYTE [3+EDX],1
+    92 000000B9 84 C0                           	TEST	AL,AL
+    93 000000BB 74 09                           	JE	L10
+    94 000000BD 81 C9 FFFFFF00                  	OR	ECX,-256
+    95 000000C3 89 4A 04                        	MOV	DWORD [4+EDX],ECX
+    96 000000C6                                 L10:
+    97 000000C6 83 E3 20                        	AND	EBX,32
+    98 000000C9 84 DB                           	TEST	BL,BL
+    99 000000CB 74 07                           	JE	L11
+   100 000000CD 81 4A 08 FFFFFF00               	OR	DWORD [8+EDX],-256
+   101 000000D4                                 L11:
+   102 000000D4 F7 5A 08                        	NEG	DWORD [8+EDX]
+   103 000000D7 B8 00000001                     	MOV	EAX,1
+   104 000000DC EB 9A                           	JMP	L3
+   105 000000DE                                 L15:
+   106 000000DE 88 4A 01                        	MOV	BYTE [1+EDX],CL
+   107 000000E1 C6 42 03 03                     	MOV	BYTE [3+EDX],3
+   108 000000E5 EB 8F                           	JMP	L12
+   109 000000E7                                 L14:
+   110 000000E7 83 E6 C8                        	AND	ESI,-56
+   111 000000EA 89 F0                           	MOV	EAX,ESI
+   112 000000EC 3C 08                           	CMP	AL,8
+   113 000000EE 75 86                           	JNE	L12
+   114 000000F0 88 0A                           	MOV	BYTE [EDX],CL
+   115 000000F2 C6 42 03 02                     	MOV	BYTE [3+EDX],2
+   116 000000F6 E9 FFFFFF7B                     	JMP	L12
+   117 000000FB                                 	GLOBAL	_mousefifo
+   118                                          [SECTION .data]
+   119 00000000                                 	ALIGNB	16
+   120 00000000                                 _mousefifo:
+   121 00000000 00 00 00 00 00 00 00 00 00 00   	RESB	24
+       0000000A 00 00 00 00 00 00 00 00 00 00 
+       00000014 00 00 00 00 

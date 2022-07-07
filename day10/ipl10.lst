@@ -1,0 +1,137 @@
+     1 00000000                                 ; hello-os
+     2 00000000                                 ; TAB=4
+     3  = 0000000A                              CYLS    EQU	    10
+     4 00000000                                 
+     5 00000000                                 ; 标准FAT12格式软盘专用的代码 Stand FAT12 format floppy code
+     6                                                  ORG     0x7c00
+     7 00007C00 EB 4E                                   JMP     entry
+     8 00007C02 90                                      DB      0x90
+     9 00007C03 48 45 4C 4C 4F 49 50 4C                 DB      "HELLOIPL"      ; 启动扇区名称（8字节）
+    10 00007C0B 0200                                    DW      512             ; 每个扇区（sector）大小（必须512字节）
+    11 00007C0D 01                                      DB      1               ; 簇（cluster）大小（必须为1个扇区）
+    12 00007C0E 0001                                    DW      1               ; FAT起始位置（一般为第一个扇区）
+    13 00007C10 02                                      DB      2               ; FAT个数（必须为2）
+    14 00007C11 00E0                                    DW      224             ; 根目录大小（一般为224项）
+    15 00007C13 0B40                                    DW      2880            ; 该磁盘大小（必须为2880扇区1440*1024/512）
+    16 00007C15 F0                                      DB      0xf0            ; 磁盘类型（必须为0xf0）
+    17 00007C16 0009                                    DW      9               ; FAT的长度（必须是9扇区）
+    18 00007C18 0012                                    DW      18              ; 一个磁道（track）有几个扇区（必须为18）
+    19 00007C1A 0002                                    DW      2               ; 磁头数（必须是2）
+    20 00007C1C 00000000                                DD      0               ; 不使用分区，必须是0
+    21 00007C20 00000B40                                DD      2880            ; 重写一次磁盘大小
+    22 00007C24                                 
+    23 00007C24                                         ; 书中作者说原因不明的两行代码我查到了，see https://www.ntfs.cocdm/fat-partition-sector.htm
+    24 00007C24 00                                      DB      0               ; BPB_Physical_Disk_Number    DB   (This is related to the BIOS physical disk number. Floppy drives are numbered starting with 0x00 for the A disk. Physical hard disks are numbered starting with 0x80. The value is typically 0x80 for hard disks, regardless of how many physical disk drives exist, because the value is only relevant if the device is the startup disk.)
+    25 00007C25 00                                      DB      0               ; BPB_Current_Head            DB   (Not used by FAT file system)
+    26 00007C26 29                                      DB      0x29            ; BPB_Signature               DB   (Must be either 0x28 or 0x29 in order to be recognized by Windows NT.)
+    27 00007C27 FFFFFFFF                                DD      0xffffffff      ; BPB_Volume_Serial_Number    DD
+    28 00007C2B                                 
+    29 00007C2B                                 
+    30 00007C2B                                 
+    31 00007C2B 48 45 4C 4C 4F 2D 4F 53 20 20           DB      "HELLO-OS   "   ; 磁盘的名称（必须为11字节，不足填空格）
+       00007C35 20 
+    32 00007C36 46 41 54 31 32 20 20 20                 DB      "FAT12   "      ; 磁盘格式名称（必须是8字节，不足填空格）
+    33 00007C3E 00 00 00 00 00 00 00 00 00 00           RESB    18              ; 先空出18字节
+       00007C48 00 00 00 00 00 00 00 00 
+    34 00007C50                                 
+    35 00007C50                                 ; 程序主体
+    36 00007C50                                 
+    37 00007C50                                 entry:
+    38 00007C50 B8 0000                         		MOV		AX,0			; 初始化寄存器
+    39 00007C53 8E D0                           		MOV		SS,AX
+    40 00007C55 BC 7C00                         		MOV		SP,0x7c00
+    41 00007C58 8E D8                           		MOV		DS,AX
+    42 00007C5A                                 ; 读取磁盘
+    43 00007C5A B8 0820                         		MOV		AX,0x0820
+    44 00007C5D 8E C0                           		MOV		ES,AX
+    45 00007C5F B5 00                           		MOV		CH,0			; 柱面0
+    46 00007C61 B6 00                           		MOV		DH,0			; 磁头0
+    47 00007C63 B1 02                           		MOV		CL,2		    ; 读取第2个扇区
+    48 00007C65                                 readloop:
+    49 00007C65 BE 0000                         		MOV		SI,0			; 记录失败次数的寄存器
+    50 00007C68                                 
+    51 00007C68                                 retry:
+    52 00007C68 B4 02                           		MOV		AH,0x02			; AH=0x02 : 读取磁盘
+    53 00007C6A B0 01                           		MOV		AL,1			; AL=1 : 读取第1个扇区
+    54 00007C6C BB 0000                         		MOV		BX,0
+    55 00007C6F B2 00                           		MOV		DL,0x00			; DL=0x00 : 读取第1个簇(A驱动器)
+    56 00007C71 CD 13                           		INT		0x13			; 读取磁盘
+    57 00007C73 73 10                           		JNC		next			; 读取成功,跳转到next
+    58 00007C75 83 C6 01                        		ADD		SI,1			; 读取失败次数+1
+    59 00007C78 83 FE 05                        		CMP		SI,5			; 读取失败次数>5,跳转到fin
+    60 00007C7B 73 32                           		JAE		error			; 跳转到error
+    61 00007C7D B4 00                           		MOV 	AH,0x00			; AH=0x00 : 停止磁盘
+    62 00007C7F B2 00                           		MOV 	DL,0x00			; DL=0x00 : 停止第1个簇(A驱动器)
+    63 00007C81 CD 13                           		INT		0x13			; 停止磁盘
+    64 00007C83 EB E3                           		JMP		retry			; 重试
+    65 00007C85                                 next:
+    66 00007C85 8C C0                           		MOV		AX,ES			; AX=ES
+    67 00007C87 05 0020                         		ADD     AX,0x0020		; 把内存地址后移0x200(512)字节
+    68 00007C8A 8E C0                           		MOV		ES,AX			; 不存在ADD ES,0x200
+    69 00007C8C 80 C1 01                        		ADD		CL,1			; 读取下一个扇区
+    70 00007C8F 80 F9 12                        		CMP		CL,18			
+    71 00007C92 76 D1                           		JBE		readloop		; 读取2-18扇区
+    72 00007C94 B1 01                           		MOV		CL,1
+    73 00007C96 80 C6 01                        		ADD 	DH,1			; 磁头+1
+    74 00007C99 80 FE 02                        		CMP		DH,2			; 磁头>2,跳转到readloop
+    75 00007C9C 72 C7                           		JB		readloop		; 跳转到readloop
+    76 00007C9E B6 00                           		MOV		DH,0			; 磁头=0
+    77 00007CA0 80 C5 01                        		ADD		CH,1			; 柱面+1
+    78 00007CA3 80 FD 0A                        		CMP		CH,CYLS			; 柱面>CYLS,跳转到readloop
+    79 00007CA6 72 BD                           		JB 		readloop		; 跳转到readloop
+    80 00007CA8                                 
+    81 00007CA8 88 2E 0FF0                      		MOV		[0x0ff0],CH		; 写入磁盘柱面
+    82 00007CAC E9 4551                         		JMP 	0xc200
+    83 00007CAF                                 
+    84 00007CAF                                 error:
+    85 00007CAF BE 7CC7                         		MOV		SI,msg
+    86 00007CB2                                 putloop:
+    87 00007CB2 8A 04                           		MOV		AL,[SI]
+    88 00007CB4 83 C6 01                        		ADD		SI,1			
+    89 00007CB7 3C 00                           		CMP		AL,0
+    90 00007CB9 74 09                           		JE		fin
+    91 00007CBB B4 0E                           		MOV		AH,0x0e			
+    92 00007CBD BB 000F                         		MOV		BX,15			
+    93 00007CC0 CD 10                           		INT		0x10			
+    94 00007CC2 EB EE                           		JMP		putloop
+    95 00007CC4                                 
+    96 00007CC4                                 fin:
+    97 00007CC4 F4                              		HLT			
+    98 00007CC5 EB FD                           		JMP		fin
+    99 00007CC7                                 
+   100 00007CC7                                 msg:
+   101 00007CC7 0A 0A                           		DB		0x0a, 0x0a		
+   102 00007CC9 6C 6F 61 64 20 65 72 72 6F 72   		DB		"load error"
+   103 00007CD3 0A                              		DB		0x0a			
+   104 00007CD4 00                              		DB		0
+   105 00007CD5 00 00 00 00 00 00 00 00 00 00   		RESB	0x7dfe-$		
+       00007CDF 00 00 00 00 00 00 00 00 00 00 
+       00007CE9 00 00 00 00 00 00 00 00 00 00 
+       00007CF3 00 00 00 00 00 00 00 00 00 00 
+       00007CFD 00 00 00 00 00 00 00 00 00 00 
+       00007D07 00 00 00 00 00 00 00 00 00 00 
+       00007D11 00 00 00 00 00 00 00 00 00 00 
+       00007D1B 00 00 00 00 00 00 00 00 00 00 
+       00007D25 00 00 00 00 00 00 00 00 00 00 
+       00007D2F 00 00 00 00 00 00 00 00 00 00 
+       00007D39 00 00 00 00 00 00 00 00 00 00 
+       00007D43 00 00 00 00 00 00 00 00 00 00 
+       00007D4D 00 00 00 00 00 00 00 00 00 00 
+       00007D57 00 00 00 00 00 00 00 00 00 00 
+       00007D61 00 00 00 00 00 00 00 00 00 00 
+       00007D6B 00 00 00 00 00 00 00 00 00 00 
+       00007D75 00 00 00 00 00 00 00 00 00 00 
+       00007D7F 00 00 00 00 00 00 00 00 00 00 
+       00007D89 00 00 00 00 00 00 00 00 00 00 
+       00007D93 00 00 00 00 00 00 00 00 00 00 
+       00007D9D 00 00 00 00 00 00 00 00 00 00 
+       00007DA7 00 00 00 00 00 00 00 00 00 00 
+       00007DB1 00 00 00 00 00 00 00 00 00 00 
+       00007DBB 00 00 00 00 00 00 00 00 00 00 
+       00007DC5 00 00 00 00 00 00 00 00 00 00 
+       00007DCF 00 00 00 00 00 00 00 00 00 00 
+       00007DD9 00 00 00 00 00 00 00 00 00 00 
+       00007DE3 00 00 00 00 00 00 00 00 00 00 
+       00007DED 00 00 00 00 00 00 00 00 00 00 
+       00007DF7 00 00 00 00 00 00 00 
+   106 00007DFE 55 AA                           		DB		0x55, 0xaa

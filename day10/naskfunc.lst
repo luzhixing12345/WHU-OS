@@ -1,0 +1,178 @@
+     1 00000000                                 ; naskfunc
+     2 00000000                                 ; TAB=4
+     3 00000000                                 
+     4 00000000                                 [FORMAT "WCOFF"]
+     5 00000000                                 [INSTRSET "i486p"]
+     6 00000000                                 [BITS 32]
+     7 00000000                                 [FILE "naskfunc.nas"]
+     8 00000000                                 
+     9 00000000                                 	GLOBAL	_io_hlt, _io_cli, _io_sti, _io_stihlt
+    10 00000000                                 	GLOBAL	_io_in8,  _io_in16,  _io_in32
+    11 00000000                                 	GLOBAL	_io_out8, _io_out16, _io_out32
+    12 00000000                                 	GLOBAL	_io_load_eflags, _io_store_eflags
+    13 00000000                                 	GLOBAL	_load_gdtr, _load_idtr
+    14 00000000                                 	GLOBAL	_load_cr0, _store_cr0
+    15 00000000                                 	GLOBAL	_asm_inthandler21, _asm_inthandler27, _asm_inthandler2c
+    16 00000000                                 	GLOBAL	_memtest_sub
+    17 00000000                                 	EXTERN	_inthandler21, _inthandler27, _inthandler2c
+    18 00000000                                 
+    19                                          [SECTION .text]
+    20 00000000                                 
+    21 00000000                                 _io_hlt:        ; void io_hlt(void);
+    22 00000000 F4                              	HLT
+    23 00000001 C3                              	RET
+    24 00000002                                 _io_cli:        ; void io_cli(void);
+    25 00000002 FA                              	CLI
+    26 00000003 C3                              	RET
+    27 00000004                                 _io_sti:        ; void io_sti(void);
+    28 00000004 FB                              	STI
+    29 00000005 C3                              	RET
+    30 00000006                                 _io_stihlt:     ; void io_stihlt(void);
+    31 00000006 FB                              	STI
+    32 00000007 F4                              	HLT
+    33 00000008 C3                              	RET
+    34 00000009                                 _io_in8:        ; int io_in8(int port);
+    35 00000009 8B 54 24 04                     	MOV		EDX,[ESP+4]		; port
+    36 0000000D B8 00000000                     	MOV		EAX,0
+    37 00000012 EC                              	IN		AL,DX
+    38 00000013 C3                              	RET
+    39 00000014                                 
+    40 00000014                                 _io_in16:	; int io_in16(int port);
+    41 00000014 8B 54 24 04                     	MOV		EDX,[ESP+4]		; port
+    42 00000018 B8 00000000                     	MOV		EAX,0
+    43 0000001D 66 ED                           	IN		AX,DX
+    44 0000001F C3                              	RET
+    45 00000020                                 _io_in32:       ; int io_in32(int port);
+    46 00000020 8B 54 24 04                     	MOV		EDX,[ESP+4]		; port
+    47 00000024 ED                              	IN		EAX,DX
+    48 00000025 C3                              	RET
+    49 00000026                                 _io_out8:       ; void io_out8(int port, int data);
+    50 00000026 8B 54 24 04                     	MOV		EDX,[ESP+4]		; port
+    51 0000002A 8A 44 24 08                     	MOV		AL,[ESP+8]		; data
+    52 0000002E EE                              	OUT		DX,AL
+    53 0000002F C3                              	RET
+    54 00000030                                 
+    55 00000030                                 _io_out16:	; void io_out16(int port, int data);
+    56 00000030 8B 54 24 04                     	MOV		EDX,[ESP+4]		; port
+    57 00000034 8B 44 24 08                     	MOV		EAX,[ESP+8]		; data
+    58 00000038 66 EF                           	OUT		DX,AX
+    59 0000003A C3                              	RET
+    60 0000003B                                 
+    61 0000003B                                 _io_out32:	; void io_out32(int port, int data);
+    62 0000003B 8B 54 24 04                     	MOV		EDX,[ESP+4]		; port
+    63 0000003F 8B 44 24 08                     	MOV		EAX,[ESP+8]		; data
+    64 00000043 EF                              	OUT		DX,EAX
+    65 00000044 C3                              	RET
+    66 00000045                                 
+    67 00000045                                 _io_load_eflags:	; int io_load_eflags(void);
+    68 00000045 9C                              	PUSHFD		; PUSH EFLAGS
+    69 00000046 58                              	POP		EAX
+    70 00000047 C3                              	RET
+    71 00000048                                 
+    72 00000048                                 _io_store_eflags:	; void io_store_eflags(int eflags);
+    73 00000048 8B 44 24 04                     	MOV		EAX,[ESP+4]
+    74 0000004C 50                              	PUSH	        EAX
+    75 0000004D 9D                              	POPFD		; POP EFLAGS 
+    76 0000004E C3                              	RET
+    77 0000004F                                 
+    78 0000004F                                 _load_gdtr:		; void load_gdtr(int limit, int addr);
+    79 0000004F 66 8B 44 24 04                  		MOV		AX,[ESP+4]		; limit
+    80 00000054 66 89 44 24 06                  		MOV		[ESP+6],AX
+    81 00000059 0F 01 54 24 06                  		LGDT	[ESP+6]
+    82 0000005E C3                              		RET
+    83 0000005F                                 
+    84 0000005F                                 _load_idtr:		; void load_idtr(int limit, int addr);
+    85 0000005F 66 8B 44 24 04                  		MOV		AX,[ESP+4]		; limit
+    86 00000064 66 89 44 24 06                  		MOV		[ESP+6],AX
+    87 00000069 0F 01 5C 24 06                  		LIDT	[ESP+6]
+    88 0000006E C3                              		RET
+    89 0000006F                                 
+    90 0000006F                                 _load_cr0:		; int load_cr0(void);
+    91 0000006F 0F 20 C0                        		MOV		EAX,CR0
+    92 00000072 C3                              		RET
+    93 00000073                                 
+    94 00000073                                 _store_cr0:		; void store_cr0(int cr0);
+    95 00000073 8B 44 24 04                     		MOV		EAX,[ESP+4]
+    96 00000077 0F 22 C0                        		MOV		CR0,EAX
+    97 0000007A C3                              		RET
+    98 0000007B                                 
+    99 0000007B                                 _asm_inthandler21:
+   100 0000007B 06                              		PUSH	ES
+   101 0000007C 1E                              		PUSH	DS
+   102 0000007D 60                              		PUSHAD
+   103 0000007E 89 E0                           		MOV		EAX,ESP
+   104 00000080 50                              		PUSH	EAX
+   105 00000081 66 8C D0                        		MOV		AX,SS
+   106 00000084 8E D8                           		MOV		DS,AX
+   107 00000086 8E C0                           		MOV		ES,AX
+   108 00000088 E8 [00000000]                   		CALL	_inthandler21
+   109 0000008D 58                              		POP		EAX
+   110 0000008E 61                              		POPAD
+   111 0000008F 1F                              		POP		DS
+   112 00000090 07                              		POP		ES
+   113 00000091 CF                              		IRETD
+   114 00000092                                 
+   115 00000092                                 _asm_inthandler27:
+   116 00000092 06                              		PUSH	ES
+   117 00000093 1E                              		PUSH	DS
+   118 00000094 60                              		PUSHAD
+   119 00000095 89 E0                           		MOV		EAX,ESP
+   120 00000097 50                              		PUSH	EAX
+   121 00000098 66 8C D0                        		MOV		AX,SS
+   122 0000009B 8E D8                           		MOV		DS,AX
+   123 0000009D 8E C0                           		MOV		ES,AX
+   124 0000009F E8 [00000000]                   		CALL	_inthandler27
+   125 000000A4 58                              		POP		EAX
+   126 000000A5 61                              		POPAD
+   127 000000A6 1F                              		POP		DS
+   128 000000A7 07                              		POP		ES
+   129 000000A8 CF                              		IRETD
+   130 000000A9                                 
+   131 000000A9                                 _asm_inthandler2c:
+   132 000000A9 06                              		PUSH	ES
+   133 000000AA 1E                              		PUSH	DS
+   134 000000AB 60                              		PUSHAD
+   135 000000AC 89 E0                           		MOV		EAX,ESP
+   136 000000AE 50                              		PUSH	EAX
+   137 000000AF 66 8C D0                        		MOV		AX,SS
+   138 000000B2 8E D8                           		MOV		DS,AX
+   139 000000B4 8E C0                           		MOV		ES,AX
+   140 000000B6 E8 [00000000]                   		CALL	_inthandler2c
+   141 000000BB 58                              		POP		EAX
+   142 000000BC 61                              		POPAD
+   143 000000BD 1F                              		POP		DS
+   144 000000BE 07                              		POP		ES
+   145 000000BF CF                              		IRETD
+   146 000000C0                                 
+   147 000000C0                                 _memtest_sub:	; unsigned int memtest_sub(unsigned int start, unsigned int end)
+   148 000000C0 57                              		PUSH	EDI						; （EBX, ESI, EDI も使いたいので）
+   149 000000C1 56                              		PUSH	ESI
+   150 000000C2 53                              		PUSH	EBX
+   151 000000C3 BE AA55AA55                     		MOV		ESI,0xaa55aa55			; pat0 = 0xaa55aa55;
+   152 000000C8 BF 55AA55AA                     		MOV		EDI,0x55aa55aa			; pat1 = 0x55aa55aa;
+   153 000000CD 8B 44 24 10                     		MOV		EAX,[ESP+12+4]			; i = start;
+   154 000000D1                                 mts_loop:
+   155 000000D1 89 C3                           		MOV		EBX,EAX
+   156 000000D3 81 C3 00000FFC                  		ADD		EBX,0xffc				; p = i + 0xffc;
+   157 000000D9 8B 13                           		MOV		EDX,[EBX]				; old = *p;
+   158 000000DB 89 33                           		MOV		[EBX],ESI				; *p = pat0;
+   159 000000DD 83 33 FF                        		XOR		DWORD [EBX],0xffffffff	; *p ^= 0xffffffff;
+   160 000000E0 3B 3B                           		CMP		EDI,[EBX]				; if (*p != pat1) goto fin;
+   161 000000E2 75 18                           		JNE		mts_fin
+   162 000000E4 83 33 FF                        		XOR		DWORD [EBX],0xffffffff	; *p ^= 0xffffffff;
+   163 000000E7 3B 33                           		CMP		ESI,[EBX]				; if (*p != pat0) goto fin;
+   164 000000E9 75 11                           		JNE		mts_fin
+   165 000000EB 89 13                           		MOV		[EBX],EDX				; *p = old;
+   166 000000ED 05 00001000                     		ADD		EAX,0x1000				; i += 0x1000;
+   167 000000F2 3B 44 24 14                     		CMP		EAX,[ESP+12+8]			; if (i <= end) goto mts_loop;
+   168 000000F6 76 D9                           		JBE		mts_loop
+   169 000000F8 5B                              		POP		EBX
+   170 000000F9 5E                              		POP		ESI
+   171 000000FA 5F                              		POP		EDI
+   172 000000FB C3                              		RET
+   173 000000FC                                 mts_fin:
+   174 000000FC 89 13                           		MOV		[EBX],EDX				; *p = old;
+   175 000000FE 5B                              		POP		EBX
+   176 000000FF 5E                              		POP		ESI
+   177 00000100 5F                              		POP		EDI
+   178 00000101 C3                              		RET

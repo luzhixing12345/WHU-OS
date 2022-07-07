@@ -1,0 +1,58 @@
+     1 00000000                                 [FORMAT "WCOFF"]
+     2 00000000                                 [INSTRSET "i486p"]
+     3 00000000                                 [OPTIMIZE 1]
+     4 00000000                                 [OPTION 1]
+     5 00000000                                 [BITS 32]
+     6 00000000                                 	EXTERN	_io_out8
+     7 00000000                                 	EXTERN	_io_in8
+     8 00000000                                 	EXTERN	_fifo8_put
+     9 00000000                                 [FILE "keyboard.c"]
+    10                                          [SECTION .text]
+    11 00000000                                 	GLOBAL	_inthandler21
+    12 00000000                                 _inthandler21:
+    13 00000000 55                              	PUSH	EBP
+    14 00000001 89 E5                           	MOV	EBP,ESP
+    15 00000003 6A 61                           	PUSH	97
+    16 00000005 6A 20                           	PUSH	32
+    17 00000007 E8 [00000000]                   	CALL	_io_out8
+    18 0000000C 6A 60                           	PUSH	96
+    19 0000000E E8 [00000000]                   	CALL	_io_in8
+    20 00000013 0F B6 C0                        	MOVZX	EAX,AL
+    21 00000016 50                              	PUSH	EAX
+    22 00000017 68 [00000000]                   	PUSH	_keyfifo
+    23 0000001C E8 [00000000]                   	CALL	_fifo8_put
+    24 00000021 C9                              	LEAVE
+    25 00000022 C3                              	RET
+    26 00000023                                 	GLOBAL	_wait_KBC_sendready
+    27 00000023                                 _wait_KBC_sendready:
+    28 00000023 55                              	PUSH	EBP
+    29 00000024 89 E5                           	MOV	EBP,ESP
+    30 00000026                                 L3:
+    31 00000026 6A 64                           	PUSH	100
+    32 00000028 E8 [00000000]                   	CALL	_io_in8
+    33 0000002D 5A                              	POP	EDX
+    34 0000002E 83 E0 02                        	AND	EAX,2
+    35 00000031 75 F3                           	JNE	L3
+    36 00000033 C9                              	LEAVE
+    37 00000034 C3                              	RET
+    38 00000035                                 	GLOBAL	_init_keyboard
+    39 00000035                                 _init_keyboard:
+    40 00000035 55                              	PUSH	EBP
+    41 00000036 89 E5                           	MOV	EBP,ESP
+    42 00000038 E8 FFFFFFE6                     	CALL	_wait_KBC_sendready
+    43 0000003D 6A 60                           	PUSH	96
+    44 0000003F 6A 64                           	PUSH	100
+    45 00000041 E8 [00000000]                   	CALL	_io_out8
+    46 00000046 E8 FFFFFFD8                     	CALL	_wait_KBC_sendready
+    47 0000004B 6A 47                           	PUSH	71
+    48 0000004D 6A 60                           	PUSH	96
+    49 0000004F E8 [00000000]                   	CALL	_io_out8
+    50 00000054 C9                              	LEAVE
+    51 00000055 C3                              	RET
+    52 00000056                                 	GLOBAL	_keyfifo
+    53                                          [SECTION .data]
+    54 00000000                                 	ALIGNB	16
+    55 00000000                                 _keyfifo:
+    56 00000000 00 00 00 00 00 00 00 00 00 00   	RESB	24
+       0000000A 00 00 00 00 00 00 00 00 00 00 
+       00000014 00 00 00 00 
