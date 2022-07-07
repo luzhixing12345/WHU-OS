@@ -5,11 +5,11 @@
 #define MEMMAN_FREES		4090	// 32KB
 #define MEMMAN_ADDR			0x003c0000
 
-struct FREEINFO {	/* あき情報 */
+struct FREEINFO {	// 可用信息
 	unsigned int addr, size;
 };
 
-struct MEMMAN {		/* メモリ管理 */
+struct MEMMAN {		// 内存管理
 	int frees, maxfrees, lostsize, losts;
 	struct FREEINFO free[MEMMAN_FREES];
 };
@@ -110,7 +110,6 @@ void HariMain(void)
 		}
 	}
 }
-
 
 #define EFLAGS_AC_BIT		0x00040000
 #define CR0_CACHE_DISABLE	0x60000000
