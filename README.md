@@ -44,6 +44,8 @@ make -C day{DAY} clean
 
 - day10
 
+  ![20220708045700](https://raw.githubusercontent.com/learner-lu/picbed/master/20220708045700.png)
+
 - day20
 
 - day30

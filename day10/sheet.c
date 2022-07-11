@@ -16,30 +16,30 @@ struct SHTCTL *shtctl_init(struct MEMMAN *memman, unsigned char *vram, int xsize
 	ctl->ysize = ysize;
 	ctl->top = -1;
 	for (i = 0; i < MAX_SHEETS; i++) {
-		ctl->sheets0[i].flags = 0; // ??????
+		ctl->sheets0[i].flags = 0;  
 	}
 err:
 	return ctl;
 }
 
 struct SHEET *sheet_alloc(struct SHTCTL *ctl)
-// ????????????
+ 
 {
 	struct SHEET *sht;
 	int i;
 	for (i = 0; i < MAX_SHEETS; i++) {
 		if (ctl->sheets0[i].flags == 0) {
 			sht = &ctl->sheets0[i];
-			sht->flags = SHEET_USE; // ???????
-			sht->height = -1; // ??
+			sht->flags = SHEET_USE;  
+			sht->height = -1;  
 			return sht;
 		}
 	}
-	return 0; // ??SHEET??????????
+	return 0;
 }
 
 void sheet_setbuf(struct SHEET *sht, unsigned char *buf, int xsize, int ysize, int col_inv)
-// ??????????????
+ 
 {
 	sht->buf = buf;
 	sht->bxsize = xsize;
@@ -56,7 +56,6 @@ void sheet_refreshsub(struct SHTCTL *ctl, int vx0, int vy0, int vx1, int vy1)
 	for (h = 0; h <= ctl->top; h++) {
 		sht = ctl->sheets[h];
 		buf = sht->buf;
-		// ??vx0-vy1 ?bx0-by1????
 		bx0 = vx0 - sht->vx0;
 		by0 = vy0 - sht->vy0;
 		bx1 = vx1 - sht->vx0;
@@ -80,55 +79,55 @@ void sheet_refreshsub(struct SHTCTL *ctl, int vx0, int vy0, int vx1, int vy1)
 }
 void sheet_updown(struct SHTCTL *ctl, struct SHEET *sht, int height)
 {
-	int h, old = sht->height; // ??????????
+	int h, old = sht->height;  
 
-	// ?????????????
+	 
 	if (height > ctl->top + 1) {
 		height = ctl->top + 1;
 	}
 	if (height < -1) {
 		height = -1;
 	}
-	sht->height = height; // ????
+	sht->height = height;  
 
-	// ??SHEETS[]?????
-	if (old > height) { // ????
+
+	if (old > height) {  
 		if (height >= 0) {
-			// ???????
+			 
 			for (h = old; h > height; h--) {
 				ctl->sheets[h] = ctl->sheets[h - 1];
 				ctl->sheets[h]->height = h;
 			}
 			ctl->sheets[height] = sht;
-		} else { // ??
+		} else {  
 			if (ctl->top > old) {
-				// ???????
+				 
 				for (h = old; h < ctl->top; h++) {
 					ctl->sheets[h] = ctl->sheets[h + 1];
 					ctl->sheets[h]->height = h;
 				}
 			}
-			ctl->top--; // ?????????????,????????????
+			ctl->top--;
 		}
-		sheet_refreshsub(ctl, sht->vx0, sht->vy0, sht->vx0 + sht->bxsize, sht->vy0 + sht->bysize); // ??????????????
-	} else if (old < height) { // ????
+		sheet_refreshsub(ctl, sht->vx0, sht->vy0, sht->vx0 + sht->bxsize, sht->vy0 + sht->bysize);  
+	} else if (old < height) {  
 		if (old >= 0) {
-			// ???????
+			 
 			for (h = old; h < height; h++) {
 				ctl->sheets[h] = ctl->sheets[h + 1];
 				ctl->sheets[h]->height = h;
 			}
 			ctl->sheets[height] = sht;
-		} else { // ???????????
-			// ??????????
+		} else {  
+			 
 			for (h = ctl->top; h >= height; h--) {
 				ctl->sheets[h + 1] = ctl->sheets[h];
 				ctl->sheets[h + 1]->height = h + 1;
 			}
 			ctl->sheets[height] = sht;
-			ctl->top++; // ?????????????,????????????
+			ctl->top++;
 		}
-		sheet_refreshsub(ctl, sht->vx0, sht->vy0, sht->vx0 + sht->bxsize, sht->vy0 + sht->bysize); // ??????????????
+		sheet_refreshsub(ctl, sht->vx0, sht->vy0, sht->vx0 + sht->bxsize, sht->vy0 + sht->bysize);  
 	}
 	return;
 }
@@ -142,7 +141,7 @@ void sheet_refresh(struct SHTCTL *ctl, struct SHEET *sht, int bx0, int by0, int 
 }
 
 void sheet_slide(struct SHTCTL *ctl, struct SHEET *sht, int vx0, int vy0)
-// ??????????
+ 
 {
 	int old_vx0 = sht->vx0, old_vy0 = sht->vy0;
 	sht->vx0 = vx0;
