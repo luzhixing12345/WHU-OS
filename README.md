@@ -43,6 +43,8 @@ make -C day{DAY} clean
 
 ## 阶段展示
 
+键盘输入时请切换为英文输入法,否则会出现异常情况
+
 - day1
 
   > 基本的启动区
@@ -51,11 +53,17 @@ make -C day{DAY} clean
 
 - day10
 
-  > GDT IDT,中断处理, 内存管理, 图形的绘制,鼠标的输入
+  > GDT IDT,中断处理, 内存管理, 图形的绘制,鼠标的输入,叠加处理
 
   ![20220708045700](https://raw.githubusercontent.com/learner-lu/picbed/master/20220708045700.png)
 
 - day20
+
+  > 窗口优化,定时器,中断处理优化,多任务的进程调度,命令行窗口,键盘输入的优化,执行应用程序,API
+  >
+  > 支持dir mem type cls hello 指令
+
+  ![20220714023429](https://raw.githubusercontent.com/learner-lu/picbed/master/20220714023429.png)
 
 - day30
 
