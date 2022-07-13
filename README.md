@@ -67,6 +67,8 @@ make -C day{DAY} clean
 
 - day30
 
+  > 指令STAR WALK <kbd>shift</kbd> + <kbd>F2</kbd> 新建cmd
+
 ## 关于
 
 ### 关于WHU-OS
