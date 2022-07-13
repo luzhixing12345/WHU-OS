@@ -53,7 +53,7 @@ make -C day{DAY} clean
 
 - day10
 
-  > GDT IDT,中断处理, 内存管理, 图形的绘制,鼠标的输入,叠加处理
+  > 输入输出缓冲区,GDT IDT,中断处理,内存管理,图形的绘制,鼠标的输入,叠加处理
 
   ![20220708045700](https://raw.githubusercontent.com/learner-lu/picbed/master/20220708045700.png)
 
