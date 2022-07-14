@@ -67,7 +67,50 @@ make -C day{DAY} clean
 
 - day30
 
-  > 指令STAR WALK <kbd>shift</kbd> + <kbd>F2</kbd> 新建cmd
+  基本使用
+
+  - <kbd>Tab</kbd> 切换窗口
+  - 选中窗口时使用鼠标点击 x 或按下 <kbd>enter</kbd> 可关闭窗口
+  - <kbd>shift</kbd> + <kbd>F1</kbd> 强制关闭窗口
+  - <kbd>shift</kbd> + <kbd>F2</kbd> 新建console控制台
+  - 鼠标点击切换窗口
+
+  命令行相关指令
+
+  - dir : 查看目录文件
+  - mem : 查看内存及剩余
+  - cls : 清除控制台内容
+  - ncst : 使用ncst + 以下指令可以运行程序且并不影响当前控制台的输入
+  - star1 : 绘制一点(星星)
+  - stars : 绘制一群点
+  - walk  : 移动光标(上下左右)
+  - color, color2 : 两个颜色盘
+  - notrec : 一个非矩形窗口
+  - bball : 一个线条绘制的圆
+  - invader : 一个外星人打飞机的应用程序
+  - langmode + {MODE} : 语言模式切换,langmode 0为英文模式,1为日文模式,2为日文EUC模式
+  - type + {FILENAME} : 查看文件内容(注意langmode,langmode不正确会出现乱码,一些奇怪的格式的图片也不要试图去查看)
+  - tview + {FILENAME} : 新建一个文本框查看文件内容
+  - mmlplay + {FILENAME} : 打开音乐播放器
+
+    ```bash
+    mmlplay daigo.mml
+    ```
+
+  - gview + {FILENAME} : 预览图片
+
+    ```bash
+    gview night.bmp
+    gview fujisan.jpg
+    ```
+
+  - calc + {FORMAT} : 计算器
+
+    > 我自己的键盘的输入似乎有些问题,有点奇怪
+
+  下图为部分功能演示
+
+  ![20220714205951](https://raw.githubusercontent.com/learner-lu/picbed/master/20220714205951.png)
 
 ## 关于
 
