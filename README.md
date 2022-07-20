@@ -74,6 +74,7 @@ make -C day{DAY} clean
   - <kbd>shift</kbd> + <kbd>F1</kbd> 强制关闭窗口
   - <kbd>shift</kbd> + <kbd>F2</kbd> 新建console控制台
   - 鼠标点击切换窗口
+  - <kbd>-</kbd> 和 <kbd>=</kbd> 这两个键不能与shift组合打出,  需要一个数字键盘
 
   命令行相关指令
 
@@ -112,20 +113,6 @@ make -C day{DAY} clean
 
   ![20220714205951](https://raw.githubusercontent.com/learner-lu/picbed/master/20220714205951.png)
 
-## 关于
-
-### 关于WHU-OS
-
-WHU-OS基于30天自制操作系统改进之后操作系统,在原先的基础上进行了部分修改,模块的添加,代码的重构.详见[WHU-OS](WHU-OS.md)
-
-### 关于"30天自制操作系统"
-
-对于"30天自制操作系统" 书中内容的记录整理 - [个人博客](https://luzhixing12345.github.io/tags/OS/)
-
-作者提供的代码偶尔在我的电脑中使用QEMU模拟会出现问题,我目前也没有一个很好的解决办法. 实在不行就使用VMWARE用WIN10的ISO镜像开一个虚拟机,本项目不需要任何的环境依赖,所有的编译所需程序都在此文件夹中
-
 ### 关于文档
 
 [课程实验相关资料](https://github.com/luzhixing12345/WHU-OS/releases/tag/v0.0.1)
-
-[复现实验-操作系统验收报告](123)
