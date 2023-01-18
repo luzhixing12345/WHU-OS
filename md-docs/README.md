@@ -6,7 +6,7 @@
 
 参考: **30天自制操作系统**
 
-该实验所有的过程以及中途遇到的问题,原理和解决思路均记录在[个人博客](https://luzhixing12345.github.io/tags/OS/),每一天的任务和代码内容更新在对应的文件夹下.**对应目录下仅有当天的完成的最终代码文件**
+该实验所有的过程以及中途遇到的问题,原理和解决思路均记录在[这里](https://luzhixing12345.github.io/WHU-OS/),每一天的任务和代码内容更新在对应的文件夹下.**对应目录下仅有当天的完成的最终代码文件**
 
 ## 编译与使用
 
@@ -15,25 +15,25 @@
 运行第{DAY}天的程序
 
 ```bash
-make -C day{DAY}
+./make -C day{DAY}
 ```
 
 - 例如运行第10天
 
   ```bash
-  make -C day10
+  ./make -C day10
   ```
 
 - 运行最后修改过的的操作系统
 
   ```bash
-  make -C WHU-OS
+  ./make -C WHU-OS
   ```
 
 清除生成的文件
 
 ```bash
-make -C day{DAY} clean
+./make -C day{DAY} clean
 ```
 
 > QEMU在我的电脑中会存在部分操作系统状态模拟出现错误的情况, day10 day11会出现异常中断退出. 
