@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel='stylesheet' href=../../../css/prism.css /><link rel='stylesheet' href=../../../css/index.css />
+    <link rel="icon" href="https://raw.githubusercontent.com/learner-lu/picbed/master/logo.png">
+
+</head>
+<body class="light">
+    <div class='markdown-body'><h1>day2 汇编语言学习和Makefile入门 - 2022/5/15</h1><p>笔者大二的时候在CSAPP的课程中学习过RISC-V的汇编,也阅读过汇编语言第三版,所以理解汇编语言没什么特别大的问题,对语法也比较熟悉</p><p>关于makefile学编译原理的时候也接触过, c++多文件编译的时候也有所涉及</p><p>这一章涉及了很多计算机的底层的知识,如果一股脑地全部理出来不便于记忆也不便于学习.如果学习过CSAPP课程的同学想必不会对寄存器,内存很陌生.</p><p>况且复现操作系统的学生大部分都是计算机系大二大三,对汇编语言和计算机组成原理应该有所了解,作者在文中也仅是一笔带过,故而笔者并不会赘述此节,仅列出一些比较重要的知识点</p><h2>汇编代码解释</h2><p>相比于第一天的汇编代码,其中直接使用的十六进制书写,难以理解</p><pre><code class="language-asm">        DB      0xeb, 0x4e, 0x90 ; 开头的部分
+        ; 然后中间的一段
+        DB      0xb8, 0x00, 0x00, 0x8e, 0xd0, 0xbc, 0x00, 0x7c
+        DB      0x8e, 0xd8, 0x8e, 0xc0, 0xbe, 0x74, 0x7c, 0x8a
+        DB      0x04, 0x83, 0xc6, 0x01, 0x3c, 0x00, 0x74, 0x09
+        DB      0xb4, 0x0e, 0xbb, 0x0f, 0x00, 0xcd, 0x10, 0xeb
+        DB      0xee, 0xf4, 0xeb, 0xfd</code></pre><p>这次的汇编就是把这部分看不懂的地方翻译成了汇编语言,其余部分并未做改变</p><p>知名程序装载地址,指针移至 entry 处</p><pre><code class="language-asm">; hello-os
+; TAB=4
+
+        ORG     0x7c00          ; 指明程序装载地址
+; 标准FAT12格式软盘专用的代码 Stand FAT12 format floppy code
+
+        JMP     entry
+        DB      0x90
+; 程序主体</code></pre><p>只有BX BP SI DI可以指定内存地址,AL为AX低地址8位所以可以省略BYTE</p><p>INT(interrupt)中断是用来调用BIOS(basic input output system)</p><p>作者的原网页地址转移了,不过并没有重定位不知道为什么,这似乎看似来很不负责任?</p><p>新的地址是 <http://oswiki.osask.jp/?(AT)BIOS>,不过是日文,如果浏览器有自动翻译凑活看看也可以.</p><p><img src="https://raw.githubusercontent.com/learner-lu/picbed/master/20220524212945.png" alt="20220524212945"></p><pre><code class="language-asm">entry:
+        MOV     AX,0            ; 初始化寄存器
+        MOV     SS,AX
+        MOV     SP,0x7c00
+        MOV     DS,AX
+        MOV     ES,AX
+        MOV     SI,msg
+putloop:
+        MOV     AL,[SI]
+        ADD     SI,1            ; 给SI加1
+        CMP     AL,0
+        JE      fin
+        MOV     AH,0x0e         ; 显示一个文字
+        MOV     BX,15           ; 指定字符颜色
+        INT     0x10            ; 调用显卡BIOS
+        JMP     putloop
+fin:
+        HLT                     ; 让CPU停止，等待指令
+        JMP     fin             ; 无限循环
+msg:
+        DB      0x0a, 0x0a      ; 换行两次
+        DB      "hello, world"
+        DB      0x0a            ; 换行
+        DB      0
+        RESB    0x7dfe-$        ; 填写0x00直到0x001fe
+        DB      0x55, 0xaa</code></pre><p><img src="https://raw.githubusercontent.com/learner-lu/picbed/master/20220524213920.png" alt="20220524213920"></p><h2>Makefile</h2><p>作者的makefile文件就是用来简化工作的,固定脚本和指令,便于开发者使用.</p><p>由于他这里把路径写死了,所以我们需要把文件放到对应的位置,执行 <code>make img</code>就生成了映像文件,<code>make run</code>就可以直接使用qemu启动了,真的很方便,指令大大减少.</p><blockquote>如果尚不熟悉makefile可以浏览一下阮一峰老师的<a href="https://www.ruanyifeng.com/blog/2015/02/make.html" target="_blank">make命令教程</a>,也可以使用<code>make -h</code>来获取帮助</blockquote><pre><code class="language-txt">
+default :
+    ../z_tools/make.exe img
+ipl.bin : ipl.nas Makefile
+    ../z_tools/nask.exe ipl.nas ipl.bin ipl.lst
+helloos.img : ipl.bin Makefile
+    ../z_tools/edimg.exe   imgin:../z_tools/fdimg0at.tek \
+        wbinimg src:ipl.bin len:512 from:0 to:0   imgout:helloos.img
+asm :
+    ../z_tools/make.exe -r ipl.bin
+img :
+    ../z_tools/make.exe -r helloos.img
+run :
+    ../z_tools/make.exe img
+    copy helloos.img ..\z_tools\qemu\fdimage0.bin
+    ../z_tools/make.exe -C ../z_tools/qemu
+install :
+    ../z_tools/make.exe img
+    ../z_tools/imgtol.com w a: helloos.img
+clean :
+    -del ipl.bin
+    -del ipl.lst
+src_only :
+    ../z_tools/make.exe clean
+    -del helloos.img</code></pre><p>当然在我们本机上也不需要这么麻烦,之前已经安装过QEMU,并且把QEMU和nask的路径都加入到环境变量里了</p><p>接着执行</p><pre><code class="language-bash">nask day2.nas day2.img
+qemu-system-i386 day2.img</code></pre><p>就可以顺利执行了,这就是汇编语言的魅力~</p><blockquote>前面已经介绍过,该汇编文本并不支持NASM语法,需要修改一部分地方.</blockquote></div>
+    <div class="dir-tree"><ul><li><a href="../../md-docs/README" >README</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day2" >自制操作系统day2</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day3" >自制操作系统day3</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day4" >自制操作系统day4</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day5" >自制操作系统day5</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day6" >自制操作系统day6</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day7" >自制操作系统day7</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day8" >自制操作系统day8</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day9" >自制操作系统day9</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day10" >自制操作系统day10</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day11" >自制操作系统day11</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day12" >自制操作系统day12</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day13" >自制操作系统day13</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day14" >自制操作系统day14</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day15" >自制操作系统day15</a></li></ul></div>
+    <div class="zood"><a class="" href="https://github.com/luzhixing12345/zood" target="_blank" >zood</a></div>
+    <script type="text/javascript" src="../../../js/change_mode.js"></script><script>addChangeModeButton("../../../img/sun.png","../../../img/moon.png")</script><script type="text/javascript" src="../../../js/copy_code.js"></script><script>addCodeCopy("../../../img/before_copy.png","../../../img/after_copy.png")</script><script type="text/javascript" src="../../../js/prism.js"></script><script type="text/javascript" src="../../../js/next_front.js"></script><script>addLink("../../md-docs/README","../../md-docs/自制操作系统day3","ab")</script><script type="text/javascript" src="../../../js/picture_preview.js"></script><script type="text/javascript" src="../../../js/check_box.js"></script>
+</body>
+</html>

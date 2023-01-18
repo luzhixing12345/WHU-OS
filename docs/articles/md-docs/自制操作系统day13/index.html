@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel='stylesheet' href=../../../css/prism.css /><link rel='stylesheet' href=../../../css/index.css />
+    <link rel="icon" href="https://raw.githubusercontent.com/learner-lu/picbed/master/logo.png">
+
+</head>
+<body class="light">
+    <div class='markdown-body'><h1>定时器(2)</h1><p>开始是一些结构化的调整和测试速度,我也就没测<del>懒</del></p><p>然后是对缓冲区的调整FIFO32,将所有外部IO的输入和输出全部整合到一个缓冲区的队列中</p><p>这一部分我重点说明一下线性表和哨兵,这里的处理思路很好</p><h2>线性表的处理</h2><p>由于中断处理中不应该耗时过长,而作者提及的这两处都涉及到了内存单元的读写,这显然是不希望看到的</p><p><img src="https://raw.githubusercontent.com/learner-lu/picbed/master/20220713034652.png" alt="20220713034652"></p><p><img src="https://raw.githubusercontent.com/learner-lu/picbed/master/20220713034714.png" alt="20220713034714"></p><p>那么如何避免这种内存单元的移动呢? 新加了一个指针next</p><pre><code class="language-c">struct TIMER {
+    struct TIMER *next;
+    unsigned int timeout, flags;
+    struct FIFO32 *fifo;
+    int data;
+};</code></pre><p>注意此时有两个next变量,一个是timectl表中的next(unsigned int),用于记录下一个(最近的)计时器时间,另一个是timer的next(TIMER *),用于记录下一个计时器的地址</p><p>回忆一下现在所有的timectl中的timer都是按照timeout从小到大排序好的,<code>inthandler20</code>的处理思路类似,唯一的改变就是避免了移动,直接将timectl中timer的头指针指向下一个计时器的位置即可.</p><p><code>timer_settime</code>函数的思路下图很清晰,在一个链表中查找设置的timeout对应的位置,然后将这个计时器插入进去.</p><p><img src="https://raw.githubusercontent.com/learner-lu/picbed/master/sklj9.jpg" alt="sklj9"></p><p>这样一种链表的结构就要比数组方便很多了</p><h2>哨兵</h2><p>我们首先观察一下上图中的timer_settime函数,作者提到的四种情况</p><ul><li>运行中的定时器只有一个</li></ul><ul><li>插入到最前面的情况</li></ul><ul><li>插入到s,t之间的情况</li></ul><ul><li>插入到最后面的情况</li></ul><p>以下代码的注释部分代表了不同情况对应的条件分支</p><pre><code class="language-c">void timer_settime(struct TIMER *timer, unsigned int timeout)
+{
+    int e;
+    struct TIMER *t, *s;
+    timer-&gt;timeout = timeout + timerctl.count;
+    timer-&gt;flags = TIMER_FLAGS_USING;
+    e = io_load_eflags();
+    io_cli();
+    timerctl.using++;
+    // state-1
+    if (timerctl.using == 1) {
+        timerctl.t0 = timer;
+        timer-&gt;next = 0;
+        timerctl.next = timer-&gt;timeout;
+        io_store_eflags(e);
+        return;
+    }
+    t = timerctl.t0;
+    // state-2
+    if (timer-&gt;timeout &lt;= t-&gt;timeout) {
+        timerctl.t0 = timer;
+        timer-&gt;next = t;
+        timerctl.next = timer-&gt;timeout;
+        io_store_eflags(e);
+        return;
+    }
+    for (;;) {
+        s = t;
+        t = t-&gt;next;
+        // state-4
+        if (t == 0) {
+            break;
+        }
+        // state-3
+        if (timer-&gt;timeout &lt;= t-&gt;timeout) {
+            s-&gt;next = timer;
+            timer-&gt;next = t;
+            io_store_eflags(e);
+            return;
+        }
+    }
+    s-&gt;next = timer;
+    timer-&gt;next = 0;
+    io_store_eflags(e);
+    return;
+}</code></pre><p>那么哨兵,就是用于简化这四个条件的一个"留守者",我们先来看一下<code>init_pic</code>的变化</p><pre><code class="language-c">void init_pit(void)
+{
+    int i;
+    struct TIMER *t;
+    io_out8(PIT_CTRL, 0x34);
+    io_out8(PIT_CNT0, 0x9c);
+    io_out8(PIT_CNT0, 0x2e);
+    timerctl.count = 0;
+    for (i = 0; i &lt; MAX_TIMER; i++) {
+        timerctl.timers0[i].flags = 0; /* 未使用 */
+    }
+    t = timer_alloc();
+    t-&gt;timeout = 0xffffffff;
+    t-&gt;flags = TIMER_FLAGS_USING;
+    t-&gt;next = 0;
+    timerctl.t0 = t;
+    timerctl.next = 0xffffffff;
+    return;
+}</code></pre><p>也就是在初始化的时候就设置了一个计时器,timeout是0xffffffff(unsigned int的最大值),然后初始化next.</p><p>由于多了一个已经设置为最大时间的计时器,所以现在对于上方的四种情况有两种情况肯定不会发生</p><ul><li>运行中的定时器只有一个(不会发生,至少有两个计时器)</li></ul><ul><li>插入到最前面的情况</li></ul><ul><li>插入到s,t之间的情况</li></ul><ul><li>插入到最后面的情况(哨兵计时器时间最大值,一定在最后)</li></ul><p>所以可以删掉之前的两个条件判断,并且精简所有的函数.</p><blockquote>这里没什么技术含量就不做展开了</blockquote><p>其实这里的哨兵就是一个稳定排在最后面的计时器,用于压缩状态.关于这个技巧可以参考<a href="https://blog.csdn.net/m0_60090611/article/details/118803146" target="_blank">文章</a></p><p>除此之外哨兵还有很多其他的含义,可以参考<a href="https://blog.csdn.net/universsky2015/article/details/102590330" target="_blank">哨兵机制</a></p></div>
+    <div class="dir-tree"><ul><li><a href="../../md-docs/README" >README</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day2" >自制操作系统day2</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day3" >自制操作系统day3</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day4" >自制操作系统day4</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day5" >自制操作系统day5</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day6" >自制操作系统day6</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day7" >自制操作系统day7</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day8" >自制操作系统day8</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day9" >自制操作系统day9</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day10" >自制操作系统day10</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day11" >自制操作系统day11</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day12" >自制操作系统day12</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day13" >自制操作系统day13</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day14" >自制操作系统day14</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day15" >自制操作系统day15</a></li></ul></div>
+    <div class="zood"><a class="" href="https://github.com/luzhixing12345/zood" target="_blank" >zood</a></div>
+    <script type="text/javascript" src="../../../js/change_mode.js"></script><script>addChangeModeButton("../../../img/sun.png","../../../img/moon.png")</script><script type="text/javascript" src="../../../js/copy_code.js"></script><script>addCodeCopy("../../../img/before_copy.png","../../../img/after_copy.png")</script><script type="text/javascript" src="../../../js/prism.js"></script><script type="text/javascript" src="../../../js/next_front.js"></script><script>addLink("../../md-docs/自制操作系统day12","../../md-docs/自制操作系统day14","ab")</script><script type="text/javascript" src="../../../js/picture_preview.js"></script><script type="text/javascript" src="../../../js/check_box.js"></script>
+</body>
+</html>

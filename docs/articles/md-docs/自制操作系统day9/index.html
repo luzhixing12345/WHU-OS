@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel='stylesheet' href=../../../css/prism.css /><link rel='stylesheet' href=../../../css/index.css />
+    <link rel="icon" href="https://raw.githubusercontent.com/learner-lu/picbed/master/logo.png">
+
+</head>
+<body class="light">
+    <div class='markdown-body'><h1>day9 内存管理</h1><p><img src="https://raw.githubusercontent.com/learner-lu/picbed/master/20220707180754.png" alt="20220707180754"></p><p>作者这里的思路还是蛮有趣的,从编译器优化后的汇编语言代码反推编译器对C语言代码的优化过程</p><p>最后既想保留编译器的优化,也想实现按页对内存进行访问,所以直接手写了汇编</p><p><img src="https://raw.githubusercontent.com/learner-lu/picbed/master/fdslhoaisdhoq.png" alt="fdslhoaisdhoq"></p><h2>挑战内存管理</h2><p>作者这里介绍了两种内存管理的方式,一种是位图(bit map),一种是空闲链表</p><h3>位图</h3><p>对于第一种方式,先使用char的数组存储,每个数组元素代表该页(4KB)是否占用,0代表未占用,1代表占用</p><p>对于128MB内存128MB/4KB=0x8000=32768个页,如果使用char类型的数组来存储的话一共需要8x32768b = 32KB大小用于存储表</p><p>但是作者这里的代码我个人有一点小疑问</p><pre><code class="language-c">char s[32768];
+for (i=0; i&lt;1024; i++) {
+    s[i] = 1;
+}
+for (i=1024; i&lt;32768; i++) {
+    a[i] = 0;
+}</code></pre><p>这里为什么要用 <code>i&lt;1024</code>? 分配了4MB的空间用于干什么了呢?</p><h3>空闲链表</h3><p>空闲链表的管理方法就是在表中记录从(xxx)开始的(yyy)字节的空间是空闲的</p><p>这两种方式各有优缺点,位图的话首先存储空间要相比空闲链表大一些,其次在分配连续内存空间的时候很不方便,因为需要查找一段连续的空间是否都没有被使用,如果分配的内存空间很大很容易搜索很长时间. 相比之下空闲链表对于大整型的内存分配就要有好很多,但是如果处理剩余的空间,10MB的空间分配了9.8MB那么剩下的零散的空间如何有效利用? 不同剩余空间的大小如何选择一个进行分配,如何回收. 这些系统性的知识点在操作系统课程中作为前置知识都介绍过了,我在这里就不再赘述</p><h2>实现内存管理</h2><p>作者在这里也没有纠结,选择了简单化处理,割舍到多出来的内存空间,使用了空闲链表的形式</p><p>首先构建了两个结构体,用于存储表中的信息.</p><p>创建了四个函数:</p><ul><li><code>memman_init</code> 用于初始化内存表基本信息</li></ul><ul><li><code>memman_total</code> 用于计算可用内存单元总量</li></ul><ul><li><code>memman_alloc</code> 用于为在表中寻找一块内存大小为size的区域分配给应用程序</li></ul><ul><li><code>memman_free</code> 用于释放内存空间</li></ul><p>对于memman<i>alloc我有一些想法,作者这里是当free[i].size==0的时候将这条信息删除,然后数组后续所有项向前移动一格,但是我感觉这种方式并不好,我感觉可以设置一个 `MIN</i>SIZE<code> 用于判断最小的空间,如果小于MIN_SIZE那么我们就认为这块内存空间已经不可以再分配了. 而且也没必要数组后续的元素向前移动,这样做感觉很麻烦,我认为完全可以在结构体中多设计一个 </code>bool enable<code> 用于判断该信息是否可用,如果剩余内存大小小于 </code>MIN_SIZE<code> 那么将 </code>enable=true`,这样还可以节约这个移动元素的事件</p><blockquote>这里可以后续修改一下</blockquote><pre><code class="language-c">unsigned int memman_alloc(struct MEMMAN *man, unsigned int size)
+// 分配内存
+{
+    unsigned int i, a;
+    for (i = 0; i &lt; man-&gt;frees; i++) {
+        if (man-&gt;free[i].size &gt;= size) {
+            // 找到足够大的空间
+            a = man-&gt;free[i].addr;
+            man-&gt;free[i].addr += size;
+            man-&gt;free[i].size -= size;
+            if (man-&gt;free[i].size == 0) {
+                // 如果free[i] 剩余大小为0，那么删掉一条可用信息
+                man-&gt;frees--;
+                for (; i &lt; man-&gt;frees; i++) {
+                    man-&gt;free[i] = man-&gt;free[i + 1]; // 代入结构体
+                }
+            }
+            return a;
+        }
+    }
+    return 0; // 无可用空间则返回0
+}</code></pre><p>最后这个<code>memman_free</code> 函数还是比较有趣的,看看完整代码对于理解struct中的int frees, maxfrees, lostsize, losts的含义还是很有帮助的,这里我来结合实例代码讲解一下.</p><p>首先在<code>HariMain</code>中定义了内存管理表的位置,<code>0x003c0000</code>的地址(宏)</p><pre><code class="language-c">struct MEMMAN *memman = (struct MEMMAN *) MEMMAN_ADDR;</code></pre><p>首先在<code>memman_init</code>函数中初始化了 frees, maxfrees, lostsize, losts 四个变量为1</p><pre><code class="language-c">memman_init(memman);
+...
+void memman_init(struct MEMMAN *man)
+{
+    man-&gt;frees = 0;         // 可用信息数目
+    man-&gt;maxfrees = 0;      // 用于观察的可用状态，frees的最大值
+    man-&gt;lostsize = 0;      // 释放失败的内存大小综合
+    man-&gt;losts = 0;         // 释放失败的册数
+    return;
+}</code></pre><p>但是并没有初始化<code>free</code>数组,作为一个结构体类型的数组它没有被初始化是可能会存在一些问题的,但是作者没有初始化也是有原因的,我们接着往下看.</p><p>接着调用了 <code>memman_free</code> , 这个函数很长,但是第一次被调用的时候 <code>man-&gt;frees=0</code> <code>i=0</code>,这两个条件可以让我们过滤代码段然后清晰看到程序执行了哪一个分支</p><pre><code class="language-c">memman_free(memman, 0x00001000, 0x0009e000); /* 0x00001000 - 0x0009efff */
+...
+int memman_free(struct MEMMAN *man, unsigned int addr, unsigned int size) {
+    // 既不能与前面的归纳到一起，也不能与后面的归纳到一起
+    if (man-&gt;frees &lt; MEMMAN_FREES) {
+        // free[i]之后的向后移动，腾出一点可用空间
+        // 这里也不执行
+        // for (j = man-&gt;frees; j &gt; i; j--) {
+        //  man-&gt;free[j] = man-&gt;free[j - 1];
+        // }
+        man-&gt;frees++;
+        if (man-&gt;maxfrees &lt; man-&gt;frees) {
+            man-&gt;maxfrees = man-&gt;frees; // 更新最大值
+        }
+        man-&gt;free[i].addr = addr;
+        man-&gt;free[i].size = size;
+        return 0; // 成功完成
+    }
+    // 不能往后移动
+    man-&gt;losts++;
+    man-&gt;lostsize += size;
+    return -1; // 失败
+}</code></pre><p>man完成了第一次初始化,即</p><ul><li>man->frees = 1</li></ul><ul><li>man->free[0].addr = 0x00001000</li></ul><ul><li>man->free[0].size = 0x0009e000</li></ul><p>第二次memman_free的时候释放了32MB-4MB=28MB的一段内存空间,所以现在frees中有两项,所有可用的内存大小是(0x9e000+28MB)</p><p>有点没太搞懂的地方就是为什么要第一次释放一块 0x00001000 - 0x0009efff 范围的内存</p><p>关于memman_free函数的代码我觉得作者写的注释还算清晰,我根据这里的内存分配和释放也做了<a href="123" target="_blank">可视化演示</a></p><p><img src="https://raw.githubusercontent.com/learner-lu/picbed/master/20220707220949.png" alt="20220707220949"></p></div>
+    <div class="dir-tree"><ul><li><a href="../../md-docs/README" >README</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day2" >自制操作系统day2</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day3" >自制操作系统day3</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day4" >自制操作系统day4</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day5" >自制操作系统day5</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day6" >自制操作系统day6</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day7" >自制操作系统day7</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day8" >自制操作系统day8</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day9" >自制操作系统day9</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day10" >自制操作系统day10</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day11" >自制操作系统day11</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day12" >自制操作系统day12</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day13" >自制操作系统day13</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day14" >自制操作系统day14</a></li></ul><ul><li><a href="../../md-docs/自制操作系统day15" >自制操作系统day15</a></li></ul></div>
+    <div class="zood"><a class="" href="https://github.com/luzhixing12345/zood" target="_blank" >zood</a></div>
+    <script type="text/javascript" src="../../../js/change_mode.js"></script><script>addChangeModeButton("../../../img/sun.png","../../../img/moon.png")</script><script type="text/javascript" src="../../../js/copy_code.js"></script><script>addCodeCopy("../../../img/before_copy.png","../../../img/after_copy.png")</script><script type="text/javascript" src="../../../js/prism.js"></script><script type="text/javascript" src="../../../js/next_front.js"></script><script>addLink("../../md-docs/自制操作系统day8","../../md-docs/自制操作系统day10","ab")</script><script type="text/javascript" src="../../../js/picture_preview.js"></script><script type="text/javascript" src="../../../js/check_box.js"></script>
+</body>
+</html>
