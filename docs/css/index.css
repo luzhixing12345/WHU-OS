@@ -19,8 +19,8 @@ body {
 
 .markdown-body {
   margin-top: 2%;
-  margin-left: 25%;
-  margin-right: 25%;
+  margin-left: 20%;
+  margin-right: 20%;
   padding: 20px 50px;
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
@@ -33,7 +33,7 @@ body {
   word-wrap: break-word;
   border-radius: 10px;
   box-shadow: rgba(17, 17, 26, 0.1) 0px 4px 16px, rgba(17, 17, 26, 0.05) 0px 8px 32px;
-  /* background-color: rgb(255, 255, 255); */
+  background-color: #fff;
 }
 
 .markdown-light {
@@ -157,6 +157,7 @@ blockquote {
   padding: 16px;
   overflow: auto;
   font-size: 85%;
+  /* max-height: 600px; */
   line-height: 1.45;
   background-color: #f6f8fa;
   border-radius: 3px;
@@ -183,8 +184,7 @@ blockquote {
 }
 
 .markdown-body pre code {
-  display: inline;
-  max-width: auto;
+  max-width: 100%;
   padding: 0;
   margin: 0;
   overflow: visible;
@@ -214,7 +214,7 @@ blockquote {
 
 .markdown-body ul {
   margin-top: 0;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 }
 
 .markdown-body ol,
@@ -240,6 +240,10 @@ blockquote {
 
 .markdown-body li + li {
   margin-top: 0.25em;
+}
+
+.markdown-body ul ul li:first-child {
+  padding-top: 15px; /* 你希望的距离 */
 }
 
 .markdown-body table {
@@ -272,6 +276,17 @@ blockquote {
   border-collapse: collapse;
 }
 
+.markdown-dark table tr {
+  background-color: #444444;
+  border-top: 1px solid #c6cbd1;
+  color: white;
+}
+
+.markdown-dark table tr:nth-child(2n) {
+  background-color: #808080;
+  color: white;
+}
+
 .markdown-body h1,
 .markdown-body h2,
 .markdown-body h3,
@@ -284,7 +299,17 @@ blockquote {
   line-height: 1.25;
 }
 
-img {
+.markdown-body > ul > li:has(input) {
+  padding-left: 0;
+  margin-bottom: 0;
+}
+
+.markdown-body ul > li:has(input) > ul {
+  list-style-type: none;
+  padding-left: 8px;
+}
+
+.markdown-body img {
   max-width: 80%;
   display: block;
   margin: 0 auto;
@@ -294,6 +319,32 @@ img {
 
 .markdown-body pre {
   position: relative;
+}
+
+.markdown-body pre #code_copy {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  margin-top: -16px;
+  padding: 3px;
+  opacity: 0.9;
+  border: 1px solid rgba(149, 157, 165, 0.2);
+  border-radius: 5px;
+  z-index: 1;
+}
+
+.markdown-light pre #code_copy {
+  background-color: rgb(196, 196, 196);
+}
+
+.markdown-body pre #code_copy:hover {
+  background-color: #ffffff;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  border-radius: 5px;
+}
+
+.markdown-body ul li blockquote {
+  margin-top: 10px;
 }
 
 .changeMode {
@@ -308,33 +359,6 @@ img {
     rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
 }
 
-.markdown-body pre #code_copy {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  margin-top: -16px;
-  padding: 3px;
-  opacity: 0.9;
-  border: 1px solid rgba(149, 157, 165, 0.2);
-  transition: all 0.5s;
-  border-radius: 5px;
-}
-
-.markdown-light pre #code_copy {
-  background-color: rgb(196, 196, 196);
-}
-
-.markdown-body pre #code_copy:hover {
-  transition: all 0.5s;
-  background-color: #ffffff;
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-  border-radius: 5px;
-}
-
-.markdown-body pre #code_copy:active {
-  padding: 2px;
-}
-
 .markdown-light :not(pre) > code[class*="language-"],
 .markdown-light pre[class*="language-"] {
   background: #161823;
@@ -342,21 +366,21 @@ img {
 
 .markdown-dark :not(pre) > code[class*="language-"],
 .markdown-dark pre[class*="language-"] {
-  background: #f0f0f4;
+  background: #303030;
 }
 
 .markdown-light .token.cdata,
 .markdown-light .token.comment,
 .markdown-light .token.doctype,
 .markdown-light .token.prolog {
-  color: #808080;
+  color: #6A9955;
 }
 
 .markdown-dark .token.cdata,
 .markdown-dark .token.comment,
 .markdown-dark .token.doctype,
 .markdown-dark .token.prolog {
-  color: #808080;
+  color: #6A9955;
 }
 
 .markdown-light code[class*="language-"],
@@ -366,7 +390,7 @@ img {
 
 .markdown-dark code[class*="language-"],
 .markdown-dark pre[class*="language-"] {
-  color: #000;
+  color: #fff;
 }
 
 code[class*="language-"] ::-moz-selection,
@@ -449,13 +473,37 @@ pre[class*="language-"]::selection {
 .markdown-light .token.atrule,
 .markdown-light .token.attr-value,
 .markdown-light .token.keyword {
-  color: #B980AD;
+  color: #569CD6;
+}
+
+.markdown-light .token.directive.keyword {
+  color: #C586C0;
+}
+
+.markdown-dark .token.directive.keyword {
+  color: #C586C0;
+}
+
+.markdown-light .token.directive-hash {
+  color: #C586C0;
+}
+
+.markdown-dark .token.directive-hash {
+  color: #C586C0;
+}
+
+.markdown-light .token.property {
+  color: #9CDCFE;
+}
+
+.markdown-dark .token.property {
+  color: #9CDCFE;
 }
 
 .markdown-dark .token.atrule,
 .markdown-dark .token.attr-value,
 .markdown-dark .token.keyword {
-  color: #B980AD;
+  color: #569CD6;
 }
 
 .markdown-light .token.function {
@@ -486,6 +534,11 @@ pre[class*="language-"]::selection {
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 
+.change-dark {
+  background-color: #6a737d;
+  color: #f8f9fa;
+}
+
 .change-article:hover {
   cursor: pointer;
   font-weight: bolder;
@@ -500,9 +553,9 @@ pre[class*="language-"]::selection {
 
 .next-front {
   position: fixed;
-  right: 10%;
-  top: 40%;
-  width: 10%;
+  right: 6%;;
+  top: 60%;;
+  width: 10%;;
   /* white-space:nowrap; */
 }
 
@@ -513,7 +566,7 @@ pre[class*="language-"]::selection {
 .dir-tree {
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
   position: fixed;
-  left: 8%;
+  left: 6%;
   top: 15%;
   width: 10%;
   min-width: 100px;
@@ -540,6 +593,14 @@ pre[class*="language-"]::selection {
   /* box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px; */
 }
 
+.dir-tree ul li a {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .search-bar::-webkit-scrollbar {
   display: none; /* Chrome Safari */
 }
@@ -549,7 +610,7 @@ pre[class*="language-"]::selection {
   display: flex;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
   position: fixed;
-  left: 8%;
+  left: 6%;
   top: 8%;
   width: 10%;
   min-width: 100px;
@@ -637,6 +698,18 @@ pre[class*="language-"]::selection {
   color: #0366d6;
 }
 
+.link-active {
+  font-weight: bold !important;
+  border-bottom: 2px solid #555;
+  padding-bottom: 2px;
+}
+
+.link-active-dark {
+  font-weight: bold !important;
+  border-bottom: 2px solid #f3f3f3;
+  padding-bottom: 2px;
+}
+
 /* 图片下的文字的样式 */
 
 .markdown-body p > p {
@@ -674,21 +747,20 @@ pre[class*="language-"]::selection {
   /* display: flex; */
 }
 
-.zood a{
+.zood a {
   text-decoration: none;
   color: grey;
   /* display: block; */
 }
 
 .zood a:hover {
-  text-decoration:underline;
+  text-decoration: underline;
 }
 
 .markdown-body input {
   margin-top: 10px;
   margin-bottom: 10px;
 }
-
 
 .center-search {
   display: none;
@@ -709,14 +781,14 @@ pre[class*="language-"]::selection {
   width: 90%;
   height: 30px;
   /* border: #6a737d; */
-  border:none;
+  border: none;
   outline: none;
   margin: 10px;
   border-radius: 5px;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
   font-size: 16px;
   letter-spacing: 0.02em;
-  padding-inline-start:5px;
+  padding-inline-start: 5px;
 }
 
 .center-search .search-header {
@@ -725,7 +797,7 @@ pre[class*="language-"]::selection {
   /* justify-content: space-around; */
 }
 
-.center-search .search-header img {  
+.center-search .search-header img {
   margin-right: 10px;
 }
 
@@ -760,7 +832,7 @@ pre[class*="language-"]::selection {
 }
 
 .search-selected {
-  background-color: rgb(66,184,131);
+  background-color: rgb(66, 184, 131);
   color: white;
 }
 
@@ -774,4 +846,57 @@ pre[class*="language-"]::selection {
   opacity: 0.5;
   /* transition: all 0.5s; */
   /* border-radius: 5px; */
+}
+
+.header-navigator {
+  display: none;
+  position: fixed;
+  width: 15%;
+  left: 83%;
+  top: 10%;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+  font-size: 18px;
+  letter-spacing: 0.02em;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+  text-overflow: ellipsis; /*  过长文字省略号 */
+  white-space: nowrap; /*禁止文字折行*/
+  list-style: none;
+  max-height: 50%;
+  overflow: auto;
+}
+
+.header-navigator::-webkit-scrollbar {
+  display: none; /* Chrome Safari */
+}
+
+.header-navigator a {
+  text-decoration: none;
+}
+
+.header-navigator a:hover {
+  font-weight: bolder;
+}
+
+.header-navigator ul {
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: -10px;
+  list-style: none;
+  position: relative;
+}
+
+.header-navigator ul ul {
+  margin-left: -20px;
+}
+
+.header-navigator a {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        Document
+    </title>
+    <link rel='stylesheet' href=../../../css/prism.css /><link rel='stylesheet' href=../../../css/index.css />
+    <link rel="icon" href="https://raw.githubusercontent.com/learner-lu/picbed/master/logo.png">
+</head>
+
+<body class="light">
+    <div class="header-navigator"><ul><li><a href="#h1-0">day4 C语言与画面显示</a><ul><li><a href="#h2-1">指针</a></li></ul><ul><li><a href="#h2-2">绘图</a></li></ul></li></ul></div><div class='markdown-body'><h1 id="h1-0">day4 C语言与画面显示</h1><pre><code class="language-asm">_write_mem8:    ; void write_mem8(int addr, int data)
+        MOV     ECX,[ESP+4]     ; [ESP+4] = addr
+        MOV     AL,[ESP+8]      ; [ESP+8] = data
+        MOV     [ECX],AL
+        RET</code></pre><p>ESP栈指针,传入两个参数 addr,data,分别在栈(栈指针ESP)中的[ESP+4]和[ESP+8]中的位置,因为int是32位,四个字节.</p><p>一个简单的修改显示白屏. 15为1111是白色,13为1101是紫色</p><p><img src="https://raw.githubusercontent.com/learner-lu/picbed/master/QQ%E6%88%AA%E5%9B%BE20220526010741.png" alt="QQ截图20220526010741"></p><p><code>i&0x0f</code>  的条纹</p><p><img src="https://raw.githubusercontent.com/learner-lu/picbed/master/QQ%E6%88%AA%E5%9B%BE20220526011055.png" alt="QQ截图20220526011055"></p><h2 id="h2-1">指针</h2><p>这一部分作者讲的真的挺好的,清晰明了浅显易懂,如果尚不熟悉指针看看这个应该可以明白个大概</p><p>汇编语言中IN OUT 用于CPU读写外设</p><p>对于IN8/16/32的区别就是最后的位数,EAX是32位的寄存器,首先将栈中的参数(int port)32位的值取出放入EDX,然后将EAX寄存器置零,最后使用从DX端口读取数据</p><blockquote><p>值得一提的是读取的数据位数是根据IN的第一个参数 AL/AX/EAX来确定8/16/32位的,DX只是端口号.最后返回值通过EAX寄存器传出,这样CPU就得到了来自外设的输入</p></blockquote><p>OUT同理,将EAX寄存器输送给DX端口,CPU将数据传出给外设</p><p><img src="https://raw.githubusercontent.com/learner-lu/picbed/master/20220705164915.png" alt="20220705164915"></p><p>CLI禁止中断发生,STI允许中断发生.在改变段寄存器SS SP时候必须要禁止中断,当改变完成后再恢复中断.</p><blockquote><p><a href="https://blog.csdn.net/zang141588761/article/details/52325106" target="_blank">参考汇编指令CLI/STI</a></p></blockquote><p>EFLAGS的第九位IF用于判断是否产生中断,整个<code>set_palette</code>函数的流程如下所示</p><p><img src="https://raw.githubusercontent.com/learner-lu/picbed/master/20220705181435.png" alt="20220705181435"></p><h2 id="h2-2">绘图</h2><p><img src="https://raw.githubusercontent.com/learner-lu/picbed/master/QQ%E6%88%AA%E5%9B%BE20220526013910.png" alt="QQ截图20220526013910"></p><p>可以说,进入了C语言就进入了主场,一切都变得清晰了起来. 不过还是尚不清楚C和操作系统之间如何联系的</p><p><img src="https://raw.githubusercontent.com/learner-lu/picbed/master/QQ%E6%88%AA%E5%9B%BE20220526014753.png" alt="QQ截图20220526014753"></p><p><img src="https://raw.githubusercontent.com/learner-lu/picbed/master/QQ%E6%88%AA%E5%9B%BE20220526015031.png" alt="QQ截图20220526015031"></p><p>现在看起来有模有样了,确实图形化界面给人感觉很直观~</p></div>
+    <div class="dir-tree"><ul><li><a href="../../md-docs/README" >README</a></li></ul><ul><li><a href="../../md-docs/day0" >day0</a></li></ul><ul><li><a href="../../md-docs/day1" >day1</a></li></ul><ul><li><a href="../../md-docs/day2" >day2</a></li></ul><ul><li><a href="../../md-docs/day3" >day3</a></li></ul><ul><li><a href="../../md-docs/day4" >day4</a></li></ul><ul><li><a href="../../md-docs/day5" >day5</a></li></ul><ul><li><a href="../../md-docs/day6" >day6</a></li></ul><ul><li><a href="../../md-docs/day7" >day7</a></li></ul><ul><li><a href="../../md-docs/day8" >day8</a></li></ul><ul><li><a href="../../md-docs/day9" >day9</a></li></ul><ul><li><a href="../../md-docs/day10" >day10</a></li></ul><ul><li><a href="../../md-docs/day11" >day11</a></li></ul><ul><li><a href="../../md-docs/day12" >day12</a></li></ul><ul><li><a href="../../md-docs/day13" >day13</a></li></ul><ul><li><a href="../../md-docs/day14" >day14</a></li></ul><ul><li><a href="../../md-docs/day15" >day15</a></li></ul></div>
+    <div class="zood"><a class="" href="https://github.com/luzhixing12345/zood" target="_blank">zood</a></div>
+    <script type="text/javascript" src="../../../js/next_front.js"></script><script>addLink("../../md-docs/day3","../../md-docs/day5","ab")</script><script type="text/javascript" src="../../../js/change_mode.js"></script><script>addChangeModeButton("../../../img/sun.png","../../../img/moon.png")</script><script type="text/javascript" src="../../../js/copy_code.js"></script><script>addCodeCopy("../../../img/before_copy.png","../../../img/after_copy.png")</script><script type="text/javascript" src="../../../js/navigator.js"></script><script type="text/javascript" src="../../../js/prism.js"></script><script type="text/javascript" src="../../../js/picture_preview.js"></script><script type="text/javascript" src="../../../js/check_box.js"></script>
+</body>
+
+</html>

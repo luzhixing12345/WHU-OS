@@ -10,30 +10,30 @@
 
 ## 编译与使用
 
-每一个文件夹内容都可以直接运行使用,无需其他格外安装
+每一个文件夹内容都可以直接运行使用,无需其他格外安装, 运行在 Windows 操作系统下
 
 运行第{DAY}天的程序
 
 ```bash
-./make -C day{DAY}
+make -C day{DAY}
 ```
 
 - 例如运行第10天
 
   ```bash
-  ./make -C day10
+  make -C day10
   ```
 
 - 运行最后修改过的的操作系统
 
   ```bash
-  ./make -C WHU-OS
+  make -C WHU-OS
   ```
 
 清除生成的文件
 
 ```bash
-./make -C day{DAY} clean
+make -C day{DAY} clean
 ```
 
 > QEMU在我的电脑中会存在部分操作系统状态模拟出现错误的情况, day10 day11会出现异常中断退出. 

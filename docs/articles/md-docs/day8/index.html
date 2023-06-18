@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        Document
+    </title>
+    <link rel='stylesheet' href=../../../css/prism.css /><link rel='stylesheet' href=../../../css/index.css />
+    <link rel="icon" href="https://raw.githubusercontent.com/learner-lu/picbed/master/logo.png">
+</head>
+
+<body class="light">
+    <div class="header-navigator"><ul><li><a href="#h1-0">day8 鼠标控制与32位模式切换</a><ul><li><a href="#h2-1">asmhead.nas的讲解</a></li></ul></li></ul></div><div class='markdown-body'><h1 id="h1-0">day8 鼠标控制与32位模式切换</h1><p>如作者所言,左右键/移动鼠标传出的三个值都有变化,鼠标键的状态取出低三位来判断,然后赋值给X Y</p><p>照葫芦画瓢就完事了</p><p><img src="https://raw.githubusercontent.com/learner-lu/picbed/master/20220707014320.png" alt="20220707014320"></p><h2 id="h2-1">asmhead.nas的讲解</h2><p>这段汇编还是很有难度的,要是看不懂就一听一过就行了</p><p>我比较关心的是这里,之前提到的 bootpack.hrb复制到0x00280000地址的处理,512KB.</p><pre><code class="language-asm">; 所有剩下的,也就是 bootpack.hrb
+
+            MOV     ESI,DSKCAC0+512
+            MOV     EDI,DSKCAC+512
+            MOV     ECX,0
+            MOV     CL,BYTE [CYLS]
+            IMUL    ECX,512*18*2/4
+            SUB     ECX,512/4
+            CALL    memcpy</code></pre><p>最后就是整个操作系统的内存分配图</p><ul><li>0x00000000 - 0x000fffff : 在启动中多次使用(启动区0x7c00),BIOS,VRAM</li></ul><ul><li>0x00100000 - 0x00267fff : 用于保存软盘中的内容(1440KB)</li></ul><ul><li>0x00268000 - 0x0026f7ff : 空(30KB)</li></ul><ul><li>0x0026f800 - 0x0026ffff : IDT(2KB)</li></ul><ul><li>0x00270000 - 0x0027ffff : GDT(64KB)</li></ul><ul><li>0x00280000 - 0x002fffff : bootpack.hrb(512KB)</li></ul><ul><li>0x00300000 - 0x003fffff : 栈及其他</li></ul><ul><li>0x00400000 -            : 空</li></ul><p>看完了我只能说,这一节实在是有点夸张,好复杂...</p><p>最后鼠标的活动基本实现了,但是在图像的叠加处理的上还不太行,我猜测作者应该打算在多任务窗口的时候处理一下,图像的层次之类的.</p></div>
+    <div class="dir-tree"><ul><li><a href="../../md-docs/README" >README</a></li></ul><ul><li><a href="../../md-docs/day0" >day0</a></li></ul><ul><li><a href="../../md-docs/day1" >day1</a></li></ul><ul><li><a href="../../md-docs/day2" >day2</a></li></ul><ul><li><a href="../../md-docs/day3" >day3</a></li></ul><ul><li><a href="../../md-docs/day4" >day4</a></li></ul><ul><li><a href="../../md-docs/day5" >day5</a></li></ul><ul><li><a href="../../md-docs/day6" >day6</a></li></ul><ul><li><a href="../../md-docs/day7" >day7</a></li></ul><ul><li><a href="../../md-docs/day8" >day8</a></li></ul><ul><li><a href="../../md-docs/day9" >day9</a></li></ul><ul><li><a href="../../md-docs/day10" >day10</a></li></ul><ul><li><a href="../../md-docs/day11" >day11</a></li></ul><ul><li><a href="../../md-docs/day12" >day12</a></li></ul><ul><li><a href="../../md-docs/day13" >day13</a></li></ul><ul><li><a href="../../md-docs/day14" >day14</a></li></ul><ul><li><a href="../../md-docs/day15" >day15</a></li></ul></div>
+    <div class="zood"><a class="" href="https://github.com/luzhixing12345/zood" target="_blank">zood</a></div>
+    <script type="text/javascript" src="../../../js/next_front.js"></script><script>addLink("../../md-docs/day7","../../md-docs/day9","ab")</script><script type="text/javascript" src="../../../js/change_mode.js"></script><script>addChangeModeButton("../../../img/sun.png","../../../img/moon.png")</script><script type="text/javascript" src="../../../js/copy_code.js"></script><script>addCodeCopy("../../../img/before_copy.png","../../../img/after_copy.png")</script><script type="text/javascript" src="../../../js/navigator.js"></script><script type="text/javascript" src="../../../js/prism.js"></script><script type="text/javascript" src="../../../js/picture_preview.js"></script><script type="text/javascript" src="../../../js/check_box.js"></script>
+</body>
+
+</html>
