@@ -15,25 +15,19 @@
 运行第{DAY}天的程序
 
 ```bash
-make -C day{DAY}
+make day{DAY}
 ```
 
-- 例如运行第10天
+例如运行第10天
 
-  ```bash
-  make -C day10
-  ```
-
-- 运行最后修改过的的操作系统
-
-  ```bash
-  make -C WHU-OS
-  ```
+```bash
+make day10
+```
 
 清除生成的文件
 
 ```bash
-make -C day{DAY} clean
+make -C src/day{DAY} clean
 ```
 
 > QEMU在我的电脑中会存在部分操作系统状态模拟出现错误的情况, day10 day11会出现异常中断退出. 
