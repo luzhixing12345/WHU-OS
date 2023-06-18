@@ -18,17 +18,11 @@
 make -C day{DAY}
 ```
 
-- 例如运行第10天
+例如运行第10天
 
-  ```bash
-  make -C day10
-  ```
-
-- 运行最后修改过的的操作系统
-
-  ```bash
-  make -C WHU-OS
-  ```
+```bash
+make -C day10
+```
 
 清除生成的文件
 
